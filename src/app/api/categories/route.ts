@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAllDocuments , insertDocument } from '@/services/mongo'
 
 export async function GET(request: Request) {
-    const data = await getAllDocuments('catagories');
+    const data = await getAllDocuments('categories');
     return NextResponse.json({
         data
     })

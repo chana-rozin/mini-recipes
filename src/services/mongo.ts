@@ -33,16 +33,23 @@ export async function getAllDocuments( collection: string) {
     return documents;
 }
 
-export async function deleteDocument(collection: string, id: number){
+export async function deleteDocument(collection: string, id: string){
     const client = await connectDatabase();
     const db = client.db(DB);
     const result = await db.collection(collection).deleteOne({_id: new ObjectId(id)});
     return result.deletedCount > 0;
 }
 
-export async function updateDocument(collection: string, id: number, updatedDocument: object) {
+export async function updateDocument(collection: string, id: string, updatedDocument: object) {
     const client = await connectDatabase();
     const db = client.db(DB);
     const result = await db.collection(collection).updateOne({_id: new ObjectId(id)}, {$set: updatedDocument});
     return result.matchedCount > 0;
+}
+
+export async function getDocumentById(collection: string, id: string) {
+    const client = await connectDatabase();
+    const db = client.db(DB);
+    const document = await db.collection(collection).findOne({ _id: new ObjectId(id)});    
+    return document;
 }
