@@ -1,0 +1,80 @@
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: Arial, sans-serif;
+  }
+  
+  .back-button {
+    margin-bottom: 20px;
+    color: #333;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .recipe-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column; /* Change to vertical layout */
+    gap: 8px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .ingredient-input {
+    margin-top: 8px; /* Add space between each ingredient input */
+  }
+  
+  .add-button {
+    background-color: #a258ed;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    margin-top: 8px; /* Ensure space between add button and last input */
+  }
+  
+  .submit-button {
+    width: 100px;
+    padding: 10px;
+    background-color: #a258ed;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    align-self: flex-end;
+  }
+  
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  
