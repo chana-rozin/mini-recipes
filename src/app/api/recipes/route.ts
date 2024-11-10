@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllDocuments, insertDocument, getDocumentByCategory } from '@/services/mongo.ts'
+import { getAllDocuments, insertDocument, getDocumentByCategory } from '@/services/mongo'
 
 
 export async function GET(req: Request) {
