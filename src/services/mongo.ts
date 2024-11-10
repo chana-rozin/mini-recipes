@@ -47,7 +47,7 @@ export async function getDocumentByCategory(collection: string, category: string
     const skip = page ? (page - 1) * pageSize! : 0;  // Skip if page is provided
     const limit = pageSize || 0; // Limit if pageSize is provided
     
-    const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
+    //const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
 
     const documents = await db.collection(collection)
         .find({ category: { $in: [category] } })
@@ -55,7 +55,7 @@ export async function getDocumentByCategory(collection: string, category: string
         .limit(limit)
         .toArray();
 
-    return { documents, totalCount };
+    return documents;
 }
 
 export async function getAllDocuments(collection: string, page?: number, pageSize?: number) {
