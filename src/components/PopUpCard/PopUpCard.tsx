@@ -25,7 +25,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ mealName, category, ingredients, 
       <div className={styles.card}>
         <h2 className={styles.mealName}>{mealName}</h2>
         <div className={styles.category}>
-          <span>Categories: </span>{category.join(', ')}
+          <span>Categories: </span>{category}
         </div>
         <div className={styles.favorite} onClick={toggleFavorite}>
           {favorite ? '★' : '☆'} {/* Full or hollow star */}

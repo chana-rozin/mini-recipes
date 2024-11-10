@@ -3,22 +3,20 @@ import styles from './Card.module.css';
 
 type CardProps = {
   imageUrl: string;
-  name: string;
-  category: string;
-  description: string;
+  mealName: string;  // Changed name to mealName
+  category: string[]; // Category is now an array of strings
   onReadMore: () => void;
   onFavoriteToggle: () => void;
   isFavorite: boolean;
 };
 
-const Card: React.FC<CardProps> = ({ imageUrl, name, category, description, onReadMore, onFavoriteToggle, isFavorite }) => {
+const Card: React.FC<CardProps> = ({ imageUrl, mealName, category, onReadMore, onFavoriteToggle, isFavorite }) => {
   return (
     <div className={styles.card}>
-      <img src={imageUrl} alt={name} className={styles.image} />
+      <img src={imageUrl} alt={mealName} className={styles.image} />
       <div className={styles.content}>
-        <h3 className={styles.name}>{name}</h3>
-        <p className={styles.category}>{category}</p>
-        <p className={styles.description}>{description}...</p>
+        <h3 className={styles.name}>{mealName}</h3>
+        <p className={styles.category}>{category.join(', ')}</p> {/* Display multiple categories */}
         <div className={styles.actions}>
           <button onClick={onReadMore} className={styles.readMore}>Read More</button>
           <button onClick={onFavoriteToggle} className={styles.favorite}>

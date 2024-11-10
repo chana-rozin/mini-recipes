@@ -1,4 +1,3 @@
-// RecipePage.tsx
 "use client";
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
@@ -20,7 +19,8 @@ const RecipePage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const uniqueCategories = Array.from(new Set(sampleRecipes.map(recipe => recipe.category)));
+    // Fetch categories based on your data
+    const uniqueCategories = Array.from(new Set(sampleRecipes.flatMap(recipe => recipe.category)));
     setCategories(uniqueCategories);
   }, []);
 
@@ -28,12 +28,14 @@ const RecipePage = () => {
     let filtered = recipes;
 
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(recipe => selectedCategories.includes(recipe.category));
+      filtered = filtered.filter(recipe =>
+        recipe.category.some(cat => selectedCategories.includes(cat))
+      );
     }
 
     if (searchQuery) {
       filtered = filtered.filter(recipe =>
-        recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+        recipe.mealName.toLowerCase().includes(searchQuery.toLowerCase()) // Adjusted to use mealName
       );
     }
 
@@ -96,9 +98,8 @@ const RecipePage = () => {
           <Card
             key={recipe.id}
             imageUrl={recipe.imageUrl}
-            name={recipe.name}
+            mealName={recipe.mealName} // Updated to use mealName
             category={recipe.category}
-            description={recipe.description}
             isFavorite={favorites.includes(recipe.id)}
             onReadMore={() => handleReadMore(recipe)} // Pass recipe data to handleReadMore
             onFavoriteToggle={() => toggleFavorite(recipe.id)}
@@ -108,7 +109,7 @@ const RecipePage = () => {
 
       {selectedRecipe && (
         <PopUpCard
-          mealName={selectedRecipe.name}
+          mealName={selectedRecipe.mealName} // Pass mealName to PopUpCard
           category={selectedRecipe.category}
           ingredients={selectedRecipe.ingredients}
           instructions={selectedRecipe.instructions}
@@ -117,7 +118,9 @@ const RecipePage = () => {
         />
       )}
 
-      <div className={styles.pagination}>1-10 of {filteredRecipes.length}</div>
+      <div className={styles.pagination}>
+        {`1-${filteredRecipes.length} of ${filteredRecipes.length}`}
+      </div>
     </div>
   );
 };
