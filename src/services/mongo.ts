@@ -26,13 +26,6 @@ export async function insertDocument(collection: string, document: object) {
     return result;
 }
 
-export async function getAllDocuments( collection: string) {
-    const client = await connectDatabase();
-    const db = client.db(DB);
-    const documents = await db.collection(collection).find().toArray();
-    return documents;
-}
-
 export async function deleteDocument(collection: string, id: string){
     const client = await connectDatabase();
     const db = client.db(DB);
@@ -47,16 +40,38 @@ export async function updateDocument(collection: string, id: string, updatedDocu
     return result.matchedCount > 0;
 }
 
+export async function getDocumentByCategory(collection: string, category: string, page?: number, pageSize?: number) {
+    const client = await connectDatabase();
+    const db = client.db(DB);
+    
+    const skip = page ? (page - 1) * pageSize! : 0;  // Skip if page is provided
+    const limit = pageSize || 0; // Limit if pageSize is provided
+    
+    const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
 
-export async function getDocumentByCategory(collection: string, category: string){
-    const client = await connectDatabase();
-    const db = client.db(DB);
-    const documents = await db.collection(collection).find({ category: { $in: [category] } }).toArray();
-    return documents;
+    const documents = await db.collection(collection)
+        .find({ category: { $in: [category] } })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+    return { documents, totalCount };
 }
-export async function getDocumentById(collection: string, id: string) {
+
+export async function getAllDocuments(collection: string, page?: number, pageSize?: number) {
     const client = await connectDatabase();
     const db = client.db(DB);
-    const document = await db.collection(collection).findOne({ _id: new ObjectId(id)});    
-    return document;
+
+    const skip = page ? (page - 1) * pageSize! : 0;
+    const limit = pageSize || 0;
+
+    const totalCount = await db.collection(collection).countDocuments();
+
+    const documents = await db.collection(collection)
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+    return { documents, totalCount };
 }
