@@ -1,0 +1,64 @@
+/* page.module.css */
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .header select {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .header input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 200px;
+  }
+  
+  .addRecipeButton {
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .addRecipeButton:hover {
+    background-color: #45a049;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tabs button {
+    padding: 0.5rem 1rem;
+    background-color: #f1f1f1;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .tabs button:hover {
+    background-color: #ddd;
+  }
+  
+  .recipeGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .pagination {
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
