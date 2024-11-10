@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
-import {getAllDocuments, insertDocument} from '@/services/mongo.ts'
+import { getAllDocuments, insertDocument, getDocumentByCategory } from '@/services/mongo.ts'
 
 
-export async function GET() {
-    
-    const res = await getAllDocuments("recipes");
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url); // Create a URL object from req.url
+    const categoryName = searchParams.get('category');
+    let res: any;
+    console.log(categoryName);
+    if(categoryName)
+        res = await getDocumentByCategory("recipes", categoryName);
+    else
+        res = await getAllDocuments("recipes");
     return NextResponse.json(res);
 }
 
