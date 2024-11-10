@@ -47,6 +47,13 @@ export async function updateDocument(collection: string, id: string, updatedDocu
     return result.matchedCount > 0;
 }
 
+
+export async function getDocumentByCategory(collection: string, category: string){
+    const client = await connectDatabase();
+    const db = client.db(DB);
+    const documents = await db.collection(collection).find({ category: { $in: [category] } }).toArray();
+    return documents;
+}
 export async function getDocumentById(collection: string, id: string) {
     const client = await connectDatabase();
     const db = client.db(DB);
