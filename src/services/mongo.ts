@@ -77,7 +77,8 @@ export async function getAllDocuments(collection: string, page?: number, pageSiz
 }
 
 export async function getDocumentById(collection: string, id: string) {
+    const client = await connectDatabase();
     const db = client.db(DB);
-    const document = await db.collection(collection).findOne({ _id: new ObjectId(id) });    
+    const document = await db.collection(collection).findOne({ _id: new ObjectId(id)});    
     return document;
 }
