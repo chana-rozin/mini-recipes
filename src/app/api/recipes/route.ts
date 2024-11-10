@@ -17,6 +17,6 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     const newRecipe = await req.json();
     console.log('POST body', newRecipe)
-    const res = await insertDocument("GBooks", newRecipe);
+    const res = await insertDocument("recipes", newRecipe);
     return NextResponse.json(res);
 }
