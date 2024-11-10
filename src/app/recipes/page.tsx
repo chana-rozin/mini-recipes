@@ -5,10 +5,10 @@ import Card from '@/components/Card/Card';
 import sampleRecipes from '../../services/staticData';
 import { useRouter } from 'next/navigation';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';  // Import PopUpCard
+import http from '@/services/http'; 
 
 const RecipePage = () => {
-  const [recipes, setRecipes] = useState(sampleRecipes);
-  const [filteredRecipes, setFilteredRecipes] = useState(sampleRecipes);
+const [recipes, setRecipes] = useState<any[]>([]);  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -18,13 +18,27 @@ const RecipePage = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    // Fetch categories based on your data
-    const uniqueCategories = Array.from(new Set(sampleRecipes.flatMap(recipe => recipe.category)));
-    setCategories(uniqueCategories);
-  }, []);
+ // Fetch data from the server
+ useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await http.get('/recipes'); // Adjust the URL to match your API route
+        setRecipes(response.data); // Set the recipes data
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
 
+    fetchRecipes();
+  }, []);
+/*
+  // Fetch categories based on your data
   useEffect(() => {
+    const uniqueCategories = Array.from(new Set(recipes.flatMap(recipe => recipe.category)));
+    setCategories(uniqueCategories);
+  }, [recipes]);
+
+  /*useEffect(() => {
     let filtered = recipes;
 
     if (selectedCategories.length > 0) {
@@ -52,7 +66,7 @@ const RecipePage = () => {
         ? prevFavorites.filter(favId => favId !== id)
         : [...prevFavorites, id]
     );
-  };
+  };*/
 
   const handleReadMore = (recipe: any) => {
     setSelectedRecipe(recipe); // Set selected recipe for popup
@@ -102,7 +116,7 @@ const RecipePage = () => {
             category={recipe.category}
             isFavorite={favorites.includes(recipe.id)}
             onReadMore={() => handleReadMore(recipe)} // Pass recipe data to handleReadMore
-            onFavoriteToggle={() => toggleFavorite(recipe.id)}
+            onFavoriteToggle={() =>{}}
           />
         ))}
       </div>
