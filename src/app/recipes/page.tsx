@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import styles from './page.module.css';
-import Card from '@/components/Card/Card';
-import PopUpCard from '@/components/PopUpCard/PopUpCard';
-import http from '@/services/http';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import styles from "./page.module.css";
+import Card from "@/components/Card/Card";
+import PopUpCard from "@/components/PopUpCard/PopUpCard";
+import http from "@/services/http";
+import { useRouter } from "next/navigation";
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -12,7 +12,7 @@ const RecipePage = () => {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
 
@@ -22,7 +22,7 @@ const RecipePage = () => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await http.get('/recipes');
+        const response = await http.get("/recipes");
         const recipesWithId = response.data.documents.map((recipe: any) => ({
           ...recipe,
           id: recipe._id, // Map _id to id
@@ -38,7 +38,9 @@ const RecipePage = () => {
 
   // Fetch categories based on your data
   useEffect(() => {
-    const uniqueCategories = Array.from(new Set(recipes.flatMap(recipe => recipe.category)));
+    const uniqueCategories = Array.from(
+      new Set(recipes.flatMap((recipe) => recipe.category))
+    );
     setCategories(uniqueCategories);
   }, [recipes]);
 
@@ -46,19 +48,19 @@ const RecipePage = () => {
     let filtered = recipes;
 
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(recipe =>
+      filtered = filtered.filter((recipe) =>
         recipe.category.some((cat: string) => selectedCategories.includes(cat))
       );
     }
 
     if (searchQuery) {
-      filtered = filtered.filter(recipe =>
+      filtered = filtered.filter((recipe) =>
         recipe.mealName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (showFavorites) {
-      filtered = filtered.filter(recipe => favorites.includes(recipe.id));
+      filtered = filtered.filter((recipe) => favorites.includes(recipe.id));
     }
 
     setFilteredRecipes(filtered);
@@ -67,7 +69,7 @@ const RecipePage = () => {
   const toggleFavorite = (id: number) => {
     setFavorites((prevFavorites) =>
       prevFavorites.includes(id)
-        ? prevFavorites.filter(favId => favId !== id)
+        ? prevFavorites.filter((favId) => favId !== id)
         : [...prevFavorites, id]
     );
   };
@@ -86,7 +88,9 @@ const RecipePage = () => {
         <select
           multiple
           onChange={(e) =>
-            setSelectedCategories(Array.from(e.target.selectedOptions, (option) => option.value))
+            setSelectedCategories(
+              Array.from(e.target.selectedOptions, (option) => option.value)
+            )
           }
         >
           {categories.map((category) => (
@@ -103,12 +107,27 @@ const RecipePage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        <button className={styles.addRecipeButton} onClick={() => router.push('/recipes/new')}>Add Recipe</button>
+        <button
+          className={styles.addRecipeButton}
+          onClick={() => router.push("/recipes/new")}
+        >
+          Add Recipe
+        </button>
       </div>
 
       <div className={styles.tabs}>
-        <button onClick={() => setShowFavorites(false)}>All Recipes</button>
-        <button onClick={() => setShowFavorites(true)}>Favorites</button>
+        <button
+          onClick={() => setShowFavorites(false)}
+          className={!showFavorites ? styles.active : ""}
+        >
+          All Recipes
+        </button>
+        <button
+          onClick={() => setShowFavorites(true)}
+          className={showFavorites ? styles.active : ""}
+        >
+          Favorites
+        </button>
       </div>
 
       <div className={styles.recipeGrid}>

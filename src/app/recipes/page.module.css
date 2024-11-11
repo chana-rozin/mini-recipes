@@ -1,64 +1,158 @@
 /* page.module.css */
 
+.container {
+  padding: 2rem;
+  background-color: #f8f8f8;
+}
+
 .header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .header select {
-    padding: 0.5rem;
-    font-size: 1rem;
-  }
-  
-  .header input {
-    padding: 0.5rem;
-    font-size: 1rem;
-    width: 200px;
-  }
-  
-  .addRecipeButton {
-    padding: 0.5rem 1rem;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .addRecipeButton:hover {
-    background-color: #45a049;
-  }
-  
-  .tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .tabs button {
-    padding: 0.5rem 1rem;
-    background-color: #f1f1f1;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .tabs button:hover {
-    background-color: #ddd;
-  }
-  
-  .recipeGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-  }
-  
-  .pagination {
-    text-align: center;
-    margin-top: 1rem;
-    color: #666;
-    font-size: 0.9rem;
-  }
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.header select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 150px;
+  background-color: #fff;
+}
+
+.header input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 250px;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.addRecipeButton {
+  padding: 0.5rem 1.5rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.addRecipeButton:hover {
+  background-color: #45a049;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tabs button {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.3s;
+}
+
+.tabs button.active {
+  color: #4CAF50; /* Highlight color for active tab */
+}
+
+.tabs button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4CAF50; /* Line color for active tab */
+}
+
+.recipeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.recipeGrid .card {
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.recipeGrid .card:hover {
+  transform: scale(1.02);
+}
+
+.recipeGrid .card img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Pop-up card styles */
+.popUpCard {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 500px;
+  width: 90%;
+}
+
+.popUpCard h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.popUpCard p {
+  color: #555;
+  line-height: 1.6;
+}
+
+.popUpCard .closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.5rem;
+  background-color: #ddd;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.popUpCard .closeButton:hover {
+  background-color: #bbb;
+}
