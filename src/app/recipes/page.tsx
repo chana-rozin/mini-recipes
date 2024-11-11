@@ -2,28 +2,32 @@
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Card from '@/components/Card/Card';
-import sampleRecipes from '../../services/staticData';
+import PopUpCard from '@/components/PopUpCard/PopUpCard';
+import http from '@/services/http';
 import { useRouter } from 'next/navigation';
-import PopUpCard from '@/components/PopUpCard/PopUpCard';  // Import PopUpCard
-import http from '@/services/http'; 
 
 const RecipePage = () => {
-const [recipes, setRecipes] = useState<any[]>([]);  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFavorites, setShowFavorites] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null); // Manage selected recipe for popup
+  const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
 
   const router = useRouter();
 
- // Fetch data from the server
- useEffect(() => {
+  // Fetch data from the server
+  useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await http.get('/recipes'); // Adjust the URL to match your API route
-        setRecipes(response.data); // Set the recipes data
+        const response = await http.get('/recipes');
+        const recipesWithId = response.data.documents.map((recipe: any) => ({
+          ...recipe,
+          id: recipe._id, // Map _id to id
+        }));
+        setRecipes(recipesWithId);
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
@@ -31,25 +35,25 @@ const [recipes, setRecipes] = useState<any[]>([]);  const [filteredRecipes, setF
 
     fetchRecipes();
   }, []);
-/*
+
   // Fetch categories based on your data
   useEffect(() => {
     const uniqueCategories = Array.from(new Set(recipes.flatMap(recipe => recipe.category)));
     setCategories(uniqueCategories);
   }, [recipes]);
 
-  /*useEffect(() => {
+  useEffect(() => {
     let filtered = recipes;
 
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(recipe =>
-        recipe.category.some(cat => selectedCategories.includes(cat))
+        recipe.category.some((cat: string) => selectedCategories.includes(cat))
       );
     }
 
     if (searchQuery) {
       filtered = filtered.filter(recipe =>
-        recipe.mealName.toLowerCase().includes(searchQuery.toLowerCase()) // Adjusted to use mealName
+        recipe.mealName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -66,14 +70,14 @@ const [recipes, setRecipes] = useState<any[]>([]);  const [filteredRecipes, setF
         ? prevFavorites.filter(favId => favId !== id)
         : [...prevFavorites, id]
     );
-  };*/
+  };
 
   const handleReadMore = (recipe: any) => {
-    setSelectedRecipe(recipe); // Set selected recipe for popup
+    setSelectedRecipe(recipe);
   };
 
   const closePopUp = () => {
-    setSelectedRecipe(null); // Close popup by resetting selectedRecipe
+    setSelectedRecipe(null);
   };
 
   return (
@@ -112,23 +116,23 @@ const [recipes, setRecipes] = useState<any[]>([]);  const [filteredRecipes, setF
           <Card
             key={recipe.id}
             imageUrl={recipe.imageUrl}
-            mealName={recipe.mealName} // Updated to use mealName
+            mealName={recipe.mealName}
             category={recipe.category}
             isFavorite={favorites.includes(recipe.id)}
-            onReadMore={() => handleReadMore(recipe)} // Pass recipe data to handleReadMore
-            onFavoriteToggle={() =>{}}
+            onReadMore={() => handleReadMore(recipe)}
+            onFavoriteToggle={() => toggleFavorite(recipe.id)}
           />
         ))}
       </div>
 
       {selectedRecipe && (
         <PopUpCard
-          mealName={selectedRecipe.mealName} // Pass mealName to PopUpCard
+          mealName={selectedRecipe.mealName}
           category={selectedRecipe.category}
           ingredients={selectedRecipe.ingredients}
           instructions={selectedRecipe.instructions}
           isFavorite={favorites.includes(selectedRecipe.id)}
-          onClose={closePopUp} // Pass closePopUp function to PopUpCard
+          onClose={closePopUp}
         />
       )}
 
