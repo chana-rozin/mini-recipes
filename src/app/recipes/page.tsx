@@ -52,7 +52,6 @@ const RecipePage = () => {
 
   useEffect(() => {fetchRecipes()}, [searchQuery, selectedCategories]);
 
-
   const fetchCategories = async () => {
     try {
       const response = await http.get('/categories');
@@ -66,8 +65,6 @@ const RecipePage = () => {
       console.error("Error fetching categories:", error);
     }
   };
-
-
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
