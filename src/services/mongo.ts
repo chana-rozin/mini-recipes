@@ -70,7 +70,7 @@ export async function getDocumentByCategory(collection: string, category: string
         .limit(limit)
         .toArray();
 
-    return { documents, totalCount };
+    return documents;
 }
 
 export async function getAllDocuments(collection: string, page?: number, pageSize?: number, search?: string |null) {
@@ -92,7 +92,8 @@ export async function getAllDocuments(collection: string, page?: number, pageSiz
 }
 
 export async function getDocumentById(collection: string, id: string) {
+    const client = await connectDatabase();
     const db = client.db(DB);
-    const document = await db.collection(collection).findOne({ _id: new ObjectId(id) });    
+    const document = await db.collection(collection).findOne({ _id: new ObjectId(id)});    
     return document;
 }
