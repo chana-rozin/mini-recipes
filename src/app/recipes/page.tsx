@@ -198,6 +198,7 @@ const RecipePage = () => {
           instructions={selectedRecipe.instructions}
           isFavorite={favorites.includes(selectedRecipe.id)}
           onClose={closePopUp}
+          onFavoriteToggle={() => handleToggleFavorite(selectedRecipe.id)}
         />
       )}
 
