@@ -48,7 +48,7 @@ export async function getDocumentByCategory(collection: string, category: string
     const limit = pageSize || 0; // Limit if pageSize is provided
     
     const documents = await db.collection(collection)
-        .find({ category: { $in: category } })
+        .find({ category: { $all: category } })
         .skip(skip)
         .limit(limit)
         .toArray();
