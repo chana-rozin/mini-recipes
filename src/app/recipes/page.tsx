@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Select,{MultiValue} from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import styles from './page.module.css';
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
+import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,9 +22,17 @@ const RecipePage = () => {
 
   // Fetch all recipes and categories when the component mounts
   useEffect(() => {
-    fetchRecipes();
     fetchCategories();
+    setFavorites(getFavorites());
   }, []);
+
+  useEffect(() => {
+    if (showFavorites) {
+      fetchFavoriteRecipes();  // Fetch favorite recipes when showing favorites
+    } else {
+      fetchRecipes();  // Fetch all recipes when not showing favorites
+    }
+  }, [showFavorites, favorites]);
 
   const fetchRecipes = async () => {
     try {
@@ -35,6 +44,23 @@ const RecipePage = () => {
       setRecipes(recipesWithId);
     } catch (error) {
       console.error("Error fetching recipes:", error);
+    }
+  };
+
+  const fetchFavoriteRecipes = async () => {
+    try {
+      const favoriteRecipes = await Promise.all(
+        favorites.map((favoriteId) =>
+          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
+        )
+      );
+      const recipesWithId = favoriteRecipes.map((recipe: any) => ({
+        ...recipe,
+        id: recipe._id,
+      }));
+      setRecipes(recipesWithId);
+    } catch (error) {
+      console.error("Error fetching favorite recipes:", error);
     }
   };
 
@@ -87,17 +113,14 @@ const RecipePage = () => {
     setSearchQuery(e.target.value); // Set search query and clear categories
   };
 
-  const handleCategoryChange = (selectedOptions:MultiValue<{ value: string; label: string; }>) => {
+  const handleCategoryChange = (selectedOptions: MultiValue<{ value: string; label: string; }>) => {
     const categories = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setSelectedCategories(categories); // Set selected categories and clear search query
   };
 
-  const toggleFavorite = (id: number) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(id)
-        ? prevFavorites.filter((favId) => favId !== id)
-        : [...prevFavorites, id]
-    );
+  const handleToggleFavorite = (id: string) => {
+    const updatedFavorites = toggleFavoriteInLS(id); 
+    setFavorites(updatedFavorites); 
   };
 
   const handleReadMore = (recipe: any) => {
@@ -161,7 +184,7 @@ const RecipePage = () => {
             category={recipe.category}
             isFavorite={favorites.includes(recipe.id)}
             onReadMore={() => handleReadMore(recipe)}
-            onFavoriteToggle={() => toggleFavorite(recipe.id)}
+            onFavoriteToggle={() => handleToggleFavorite(recipe.id)}
           />
         ))}
       </div>
