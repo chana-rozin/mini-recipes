@@ -50,6 +50,23 @@ const RecipePage = () => {
     }
   };
 
+  const fetchFavoriteRecipes = async () => {
+    try {
+      const favoriteRecipes = await Promise.all(
+        favorites.map((favoriteId) =>
+          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
+        )
+      );
+      const recipesWithId = favoriteRecipes.map((recipe: any) => ({
+        ...recipe,
+        id: recipe._id,
+      }));
+      setRecipes(recipesWithId);
+    } catch (error) {
+      console.error("Error fetching favorite recipes:", error);
+    }
+  };
+  
   useEffect(() => {fetchRecipes()}, [searchQuery, selectedCategories]);
 
   const fetchCategories = async () => {
