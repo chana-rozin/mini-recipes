@@ -7,6 +7,7 @@ import { z } from 'zod';
 import Select from 'react-select';
 import './form.css';
 import { useRouter } from 'next/navigation';
+import http from '@/services/http'; 
 
 const recipeSchema = z.object({
   mealName: z.string().min(1, 'Meal name is required'),
@@ -32,7 +33,13 @@ function AddRecipePage() {
   const router = useRouter();
 
   const onSubmit = async (data: any) => {
-    console.log(data);
+    try {
+      const response = await http.post('/recipes', data);
+      console.log('Recipe added successfully', response.data);
+      router.push('/recipes');  // Redirect to the recipes list page after submission
+    } catch (error) {
+      console.error('Error adding recipe', error);
+    }
   };
 
   const addIngredient = () => {
