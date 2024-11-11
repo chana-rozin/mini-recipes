@@ -1,82 +1,121 @@
 "use client";
+
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import styles from './page.module.css';
 import Card from '@/components/Card/Card';
-import sampleRecipes from '../../services/staticData';
+import PopUpCard from '@/components/PopUpCard/PopUpCard';
+import http from '@/services/http';
 import { useRouter } from 'next/navigation';
-import PopUpCard from '@/components/PopUpCard/PopUpCard';  // Import PopUpCard
 
 const RecipePage = () => {
-  const [recipes, setRecipes] = useState(sampleRecipes);
-  const [filteredRecipes, setFilteredRecipes] = useState(sampleRecipes);
+  const [recipes, setRecipes] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null); // Manage selected recipe for popup
+  const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
 
   const router = useRouter();
 
+  // Fetch data from the server
   useEffect(() => {
-    // Fetch categories based on your data
-    const uniqueCategories = Array.from(new Set(sampleRecipes.flatMap(recipe => recipe.category)));
-    setCategories(uniqueCategories);
+
+    const fetchCategories = async () => {
+      try {
+        const response = await http.get('/categories');
+
+        const categories = response.data.data.documents;
+
+        const options = categories.map((category: any) => ({
+          value: category.name,
+          label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
+        }));
+
+        setCategoryOptions(options);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchRecipes();
+    fetchCategories();
   }, []);
 
+  const fetchRecipes = async () => {
+    try {
+      const response = await http.get("/recipes");
+      console.log("before", response.data);
+      const recipesWithId = response.data.map((recipe: any) => ({
+        ...recipe,
+        id: recipe._id, // Map _id to id
+      }));
+      setRecipes(recipesWithId);
+      console.log("after", recipesWithId);
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
+  };
+
   useEffect(() => {
-    let filtered = recipes;
+    const fetchRecipesByCategory = async (selectedCategories: string[]) => {
+      try {
+        const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
+        const recipesWithId = response.data.map((recipe: any) => ({
+          ...recipe,
+          id: recipe._id, // Map _id to id
+        }));
+        setRecipes(recipesWithId);
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
 
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(recipe =>
-        recipe.category.some(cat => selectedCategories.includes(cat))
-      );
-    }
+      console.log('fetchRecipesByCategory');
+      fetchRecipesByCategory(selectedCategories);
+    } else
+      fetchRecipes();
+
 
     if (searchQuery) {
-      filtered = filtered.filter(recipe =>
-        recipe.mealName.toLowerCase().includes(searchQuery.toLowerCase()) // Adjusted to use mealName
-      );
+      console.log('searchQuery');
     }
 
-    if (showFavorites) {
-      filtered = filtered.filter(recipe => favorites.includes(recipe.id));
-    }
-
-    setFilteredRecipes(filtered);
-  }, [recipes, selectedCategories, searchQuery, showFavorites, favorites]);
+  }, [ selectedCategories, searchQuery]);
 
   const toggleFavorite = (id: number) => {
     setFavorites((prevFavorites) =>
       prevFavorites.includes(id)
-        ? prevFavorites.filter(favId => favId !== id)
+        ? prevFavorites.filter((favId) => favId !== id)
         : [...prevFavorites, id]
     );
   };
 
   const handleReadMore = (recipe: any) => {
-    setSelectedRecipe(recipe); // Set selected recipe for popup
+    setSelectedRecipe(recipe);
   };
 
   const closePopUp = () => {
-    setSelectedRecipe(null); // Close popup by resetting selectedRecipe
+    setSelectedRecipe(null);
   };
 
   return (
     <div>
       <div className={styles.header}>
-        <select
-          multiple
-          onChange={(e) =>
-            setSelectedCategories(Array.from(e.target.selectedOptions, (option) => option.value))
+        <Select
+          isMulti
+          options={categoryOptions}
+          className="category-select"
+          placeholder="Select categories"
+          onChange={(selectedOptions) =>
+            setSelectedCategories(selectedOptions ? selectedOptions.map(option => option.value) : [])
           }
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+          value={categoryOptions.filter(option =>
+            selectedCategories.includes(option.value)
+          )}
+        />
 
         <input
           type="text"
@@ -85,23 +124,38 @@ const RecipePage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        <button className={styles.addRecipeButton} onClick={() => router.push('/recipes/new')}>Add Recipe</button>
+        <button
+          className={styles.addRecipeButton}
+          onClick={() => router.push("/recipes/new")}
+        >
+          Add Recipe
+        </button>
       </div>
 
       <div className={styles.tabs}>
-        <button onClick={() => setShowFavorites(false)}>All Recipes</button>
-        <button onClick={() => setShowFavorites(true)}>Favorites</button>
+        <button
+          onClick={() => setShowFavorites(false)}
+          className={!showFavorites ? styles.active : ""}
+        >
+          All Recipes
+        </button>
+        <button
+          onClick={() => setShowFavorites(true)}
+          className={showFavorites ? styles.active : ""}
+        >
+          Favorites
+        </button>
       </div>
 
       <div className={styles.recipeGrid}>
-        {filteredRecipes.map((recipe) => (
+        {recipes.map((recipe) => (
           <Card
             key={recipe.id}
             imageUrl={recipe.imageUrl}
-            mealName={recipe.mealName} // Updated to use mealName
+            mealName={recipe.mealName}
             category={recipe.category}
             isFavorite={favorites.includes(recipe.id)}
-            onReadMore={() => handleReadMore(recipe)} // Pass recipe data to handleReadMore
+            onReadMore={() => handleReadMore(recipe)}
             onFavoriteToggle={() => toggleFavorite(recipe.id)}
           />
         ))}
@@ -109,17 +163,17 @@ const RecipePage = () => {
 
       {selectedRecipe && (
         <PopUpCard
-          mealName={selectedRecipe.mealName} // Pass mealName to PopUpCard
+          mealName={selectedRecipe.mealName}
           category={selectedRecipe.category}
           ingredients={selectedRecipe.ingredients}
           instructions={selectedRecipe.instructions}
           isFavorite={favorites.includes(selectedRecipe.id)}
-          onClose={closePopUp} // Pass closePopUp function to PopUpCard
+          onClose={closePopUp}
         />
       )}
 
       <div className={styles.pagination}>
-        {`1-${filteredRecipes.length} of ${filteredRecipes.length}`}
+        {`1-${recipes.length} of ${recipes.length}`}
       </div>
     </div>
   );

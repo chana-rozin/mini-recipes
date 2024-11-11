@@ -5,6 +5,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary-color: #4CAF50;
+  --hover-color: #45a049;
+  --tab-bg-color: #f1f1f1;
+  --tab-hover-color: #ddd;
+  --pagination-text-color: #666;
 }
 
 @media (prefers-color-scheme: dark) {
