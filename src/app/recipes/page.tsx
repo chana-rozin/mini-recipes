@@ -36,14 +36,15 @@ const RecipePage = () => {
     if (showFavorites) {
       fetchFavoriteRecipes();  // Fetch favorite recipes when showing favorites
     } else {
-      fetchRecipes();  // Fetch all recipes when not showing favorites
+      fetchRecipes(false);  // Fetch all recipes when not showing favorites
     }
   }, [showFavorites, favorites]);
 
-  const fetchRecipes = async () => {
+  const fetchRecipes = async (more:boolean=true) => {
     console.log("Fetching recipes");
     try {
-      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}&page=${page}&pageSize=${PAGE_SIZE}`);
+      const currentPage=more?page:1;
+      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
       if (response.data.length === 0) {
         setHasMore(false);
         return;
@@ -53,9 +54,14 @@ const RecipePage = () => {
         ...recipe,
         id: recipe._id,
       }));
-
-      setRecipes(recipesWithId);
-      setPage((prevPage) => prevPage + 1);
+      if(more){
+        setRecipes(prevState => [...prevState,...recipesWithId]);   
+        setPage(page + 1);
+      }
+      else{
+        setRecipes(recipesWithId);
+        setPage(1);
+      }
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
@@ -78,7 +84,7 @@ const RecipePage = () => {
     }
   };
 
-  useEffect(() => { fetchRecipes() }, [searchQuery, selectedCategories]);
+  useEffect(() => { fetchRecipes(false) }, [searchQuery, selectedCategories]);
 
   const fetchCategories = async () => {
     try {
@@ -179,11 +185,18 @@ const RecipePage = () => {
         dataLength={recipes.length}
         next={fetchRecipes}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}>
+        loader={<h4>Loading...</h4>}
+        endMessage={
+          <p style={{ textAlign: 'center' }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+        >
+          
         <div className={styles.recipeGrid}>
-          {recipes.map((recipe) => (
+          {recipes.map((recipe,index) => (
             <Card
-              key={recipe.id}
+              key={index}
               imageUrl={recipe.imageUrl}
               mealName={recipe.mealName}
               category={recipe.category}
