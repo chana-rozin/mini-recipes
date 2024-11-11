@@ -29,8 +29,8 @@ const RecipePage = () => {
   const fetchRecipes = async () => {
     console.log("Fetching recipes");
     try {
-      const response = await http.get(`/recipes`);
-      // const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}`);
+      // const response = await http.get(`/recipes`);
+      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}`);
       const recipesWithId = response.data.map((recipe: any) => ({
         ...recipe,
         id: recipe._id,
@@ -116,11 +116,9 @@ const RecipePage = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setSearchQuery(e.target.value);
-    setSelectedCategories([]); // Clear categories on search
   };
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ value: string; label: string; }>) => {
-    setSearchQuery(""); // Clear search on category select
     setSelectedCategories(selectedOptions ? selectedOptions.map(option => option.value) : []);
   };
 
