@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -17,20 +17,35 @@ const recipeSchema = z.object({
   ingredients: z.array(z.string().min(1, 'Ingredient cannot be empty')),
 });
 
-const categoryOptions = [
-  { value: 'starter', label: 'Starter' },
-  { value: 'main', label: 'Main' },
-  { value: 'dessert', label: 'Dessert' },
-  { value: 'dairy', label: 'Dairy' },
-  // Add other categories as needed
-];
-
 function AddRecipePage() {
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(recipeSchema),
   });
   const [ingredients, setIngredients] = useState<string[]>(['']);
+  const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const router = useRouter();
+
+  // Fetch categories from the API
+  useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await http.get('/categories');
+          
+          const categories = response.data.data.documents;
+          
+          const options = categories.map((category: any) => ({
+            value: category.name,
+            label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
+          }));
+          
+          setCategoryOptions(options);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+    
+      fetchCategories();
+  }, []);
 
   const onSubmit = async (data: any) => {
     try {
