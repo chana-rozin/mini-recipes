@@ -7,10 +7,11 @@ import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
+import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,9 +23,17 @@ const RecipePage = () => {
 
   // Fetch all recipes and categories when the component mounts
   useEffect(() => {
-    fetchRecipes();
     fetchCategories();
+    setFavorites(getFavorites());
   }, []);
+
+  useEffect(() => {
+    if (showFavorites) {
+      fetchFavoriteRecipes();  // Fetch favorite recipes when showing favorites
+    } else {
+      fetchRecipes();  // Fetch all recipes when not showing favorites
+    }
+  }, [showFavorites, favorites]);
 
   const fetchRecipes = async () => {
     console.log("Fetching recipes");
@@ -43,6 +52,7 @@ const RecipePage = () => {
 
   useEffect(() => {fetchRecipes()}, [searchQuery, selectedCategories]);
 
+
   const fetchCategories = async () => {
     try {
       const response = await http.get('/categories');
@@ -57,60 +67,6 @@ const RecipePage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchFilteredRecipes = async () => {
-  //     try {
-        
-  //       let response;
-  //       if (lastAction === "search" && searchQuery) {
-  //         response = await http.get(`/recipes?search=${searchQuery}`);
-  //       } else if (lastAction === "category" && selectedCategories.length > 0) {
-  //         console.log("Category")
-  //         response = await http.get(`/recipes?category=${selectedCategories.join(",")}`);
-  //       } else {
-  //         response = await http.get("/recipes");
-  //       }
-
-  //       const recipesWithId = response.data.map((recipe: any) => ({
-  //         ...recipe,
-  //         id: recipe._id,
-  //       }));
-  //       setRecipes(recipesWithId);
-  //     } catch (error) {
-  //       console.error("Error fetching recipes:", error);
-  //     }
-  //   };
-
-  //   fetchFilteredRecipes();
-
-  // }, [searchQuery, categoryOptions]);
-
-  // const fetchFilteredByCategoryRecipes = async (selectedCategories:string[]) => {
-  //   try {
-  //     const response = await http.get(`/recipes?category=${selectedCategories.join(",")}`);
-  //     const recipesWithId = response.data.map((recipe: any) => ({
-  //       ...recipe,
-  //       id: recipe._id,
-  //     }));
-  //     setRecipes(recipesWithId);
-  //   } catch (error) {
-  //     console.error("Error fetching recipes:", error);
-  //   }
-  // };
-
-  // const fetchFilteredBySearchRecipes = async (searchQuery: string) => {
-  //   try {
-  //     const response = await http.get(`/recipes?search=${searchQuery}`);
-
-  //     const recipesWithId = response.data.map((recipe: any) => ({
-  //       ...recipe,
-  //       id: recipe._id,
-  //     }));
-  //     setRecipes(recipesWithId);
-  //   } catch (error) {
-  //     console.error("Error fetching recipes:", error);
-  //   }
-  // };
 
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,16 +75,13 @@ const RecipePage = () => {
   };
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ value: string; label: string; }>) => {
-    setSelectedCategories(selectedOptions ? selectedOptions.map(option => option.value) : []);
+    const categories = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setSelectedCategories(categories); // Set selected categories and clear search query
   };
 
-
-  const toggleFavorite = (id: number) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(id)
-        ? prevFavorites.filter((favId) => favId !== id)
-        : [...prevFavorites, id]
-    );
+  const handleToggleFavorite = (id: string) => {
+    const updatedFavorites = toggleFavoriteInLS(id); 
+    setFavorites(updatedFavorites); 
   };
 
   const handleReadMore = (recipe: any) => {
@@ -192,19 +145,21 @@ const RecipePage = () => {
             category={recipe.category}
             isFavorite={favorites.includes(recipe.id)}
             onReadMore={() => handleReadMore(recipe)}
-            onFavoriteToggle={() => toggleFavorite(recipe.id)}
+            onFavoriteToggle={() => handleToggleFavorite(recipe.id)}
           />
         ))}
       </div>
 
       {selectedRecipe && (
         <PopUpCard
+          imageUrl={selectedRecipe.imageUrl}
           mealName={selectedRecipe.mealName}
           category={selectedRecipe.category}
           ingredients={selectedRecipe.ingredients}
           instructions={selectedRecipe.instructions}
           isFavorite={favorites.includes(selectedRecipe.id)}
           onClose={closePopUp}
+          onFavoriteToggle={() => handleToggleFavorite(selectedRecipe.id)}
         />
       )}
 
