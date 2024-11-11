@@ -78,9 +78,22 @@ const RecipePage = () => {
     } else
       fetchRecipes();
 
+      const fetchRecipesBySearch = async (searchQuery: string) => {
+        try {
+          const response = await http.get(`/recipes?search=${searchQuery}`);
+          const recipesWithId = response.data.map((recipe: any) => ({
+            ...recipe,
+            id: recipe._id, // Map _id to id
+          }));
+          setRecipes(recipesWithId);
+        } catch (error) {
+          console.error("Error fetching recipes:", error);
+        }
+      };
 
     if (searchQuery) {
       console.log('searchQuery');
+      fetchRecipesBySearch(searchQuery);
     }
 
   }, [ selectedCategories, searchQuery]);
