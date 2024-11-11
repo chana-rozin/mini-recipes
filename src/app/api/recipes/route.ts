@@ -3,7 +3,7 @@ import { getAllDocuments, insertDocument, getDocumentByCategory } from '@/servic
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
-    const categoryName = searchParams.get('category');
+    const categories = searchParams.get('category')?.split(',') || [];
     const page = searchParams.get('page');
     const pageSize = searchParams.get('pageSize');
     const pageInt = page ? parseInt(page, 10) : undefined;
@@ -11,8 +11,8 @@ export async function GET(req: Request) {
 
     let res: any;
 
-    if (categoryName)
-        res = await getDocumentByCategory("recipes", categoryName, pageInt, pageSizeInt);
+    if (categories)
+        res = await getDocumentByCategory("recipes", categories, pageInt, pageSizeInt);
     else
         res = await getAllDocuments("recipes", pageInt, pageSizeInt);
 

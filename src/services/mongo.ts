@@ -40,17 +40,15 @@ export async function updateDocument(collection: string, id: string, updatedDocu
     return result.matchedCount > 0;
 }
 
-export async function getDocumentByCategory(collection: string, category: string, page?: number, pageSize?: number) {
+export async function getDocumentByCategory(collection: string, category: string[], page?: number, pageSize?: number) {
     const client = await connectDatabase();
     const db = client.db(DB);
     
     const skip = page ? (page - 1) * pageSize! : 0;  // Skip if page is provided
     const limit = pageSize || 0; // Limit if pageSize is provided
     
-    //const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
-
     const documents = await db.collection(collection)
-        .find({ category: { $in: [category] } })
+        .find({ category: { $in: category } })
         .skip(skip)
         .limit(limit)
         .toArray();
