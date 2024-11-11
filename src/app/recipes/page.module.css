@@ -1,66 +1,89 @@
-/* page.module.css */
-
+/* General page container */
 .container {
   padding: 2rem;
   background-color: #f8f8f8;
 }
 
+/* Ensure consistent width and spacing for search boxes */
 .header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  justify-content: flex-start;
+  gap: 2rem; /* Increase space between dropdown and search input */
+  padding-left: 30px;
+  padding-right: 43px;
+  padding-top: 10px;
 }
 
-.header select {
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+/* Category dropdown styling with consistent width */
+.category-select {
+  width: 250px; /* Set fixed width */
+  height: 40px;
   padding: 0.5rem;
   font-size: 1rem;
-  color: #333;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 150px;
+  border-radius: 6px;
   background-color: #fff;
+  margin-right: 20px;
 }
 
+/* Search input styling with an inline SVG icon */
 .header input {
-  padding: 0.5rem;
+  width: 170px; /* Set same fixed width as the category select */
+  padding: 6.2px 6px 6.2px 6px; /* Padding for space around icon */
   font-size: 1rem;
-  width: 250px;
   color: #333;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: #fff;
+  background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23666" width="16" height="16" viewBox="0 0 24 24"%3E%3Cpath d="M10 2a8 8 0 1 0 4.906 14.32l4.387 4.387 1.414-1.414-4.387-4.387A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4z"/%3E%3C/svg%3E');
+  background-position: right 10px center; /* Position icon on the right */
+  background-repeat: no-repeat;
+  background-size: 1rem; /* Adjust icon size */
 }
 
+/* Add Recipe button styling */
 .addRecipeButton {
-  padding: 0.5rem 1.5rem;
-  background-color: #4CAF50;
+  width: 170px;
+  padding: 6.2px 4px 6.2px 4px;
+  background-color: #6200ea; /* Changed to purple */
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  margin-left: auto; /* Pushes button to the right */
 }
 
 .addRecipeButton:hover {
-  background-color: #45a049;
+  background-color: #6200ea; /* Darker shade of purple for hover */
 }
 
+/* Tabs styling */
 .tabs {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  padding-left: 30px;
   border-bottom: 2px solid #e0e0e0;
 }
 
 .tabs button {
   position: relative;
-  padding: 0.5rem 1rem;
+  padding: 0.8rem 1.5rem;
   font-size: 1rem;
   font-weight: bold;
-  color: #333;
+  color: #666;
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -69,7 +92,7 @@
 }
 
 .tabs button.active {
-  color: #4CAF50; /* Highlight color for active tab */
+  color: #6200ea; /* Changed to purple */
 }
 
 .tabs button.active::after {
@@ -79,80 +102,32 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #4CAF50; /* Line color for active tab */
+  background-color: #6200ea; /* Purple underline */
 }
 
+/* Recipe grid layout */
 .recipeGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1.5rem;
-  margin-top: 1rem;
-  padding: 1rem;
+  padding: 30px;
 }
-
-.recipeGrid .card {
-  padding: 1rem;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+/* Page title (Recipes header) styling */
+.pagetitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: black; /* Matches the purple theme */
+  padding-left: 30px;
+  padding-top: 60px;
 }
+/* Adjustments for mobile responsiveness if needed */
+@media (max-width: 600px) {
+  .header input,
+  .category-select {
+    width: 100%; /* Full width on smaller screens */
+  }
 
-.recipeGrid .card:hover {
-  transform: scale(1.02);
-}
-
-.recipeGrid .card img {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-}
-
-.pagination {
-  text-align: center;
-  margin-top: 1rem;
-  color: #666;
-  font-size: 0.9rem;
-}
-
-/* Pop-up card styles */
-.popUpCard {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  max-width: 500px;
-  width: 90%;
-}
-
-.popUpCard h2 {
-  margin-top: 0;
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.popUpCard p {
-  color: #555;
-  line-height: 1.6;
-}
-
-.popUpCard .closeButton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 0.5rem;
-  background-color: #ddd;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.popUpCard .closeButton:hover {
-  background-color: #bbb;
+  .header {
+    gap: 1rem; /* Reduce gap for smaller screens */
+  }
 }
