@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styles from './PopUpCard.module.css';
 
 interface PopUpCardProps {
+    imageUrl: string;
     mealName: string;
     category: string[];
     ingredients: string[];
@@ -10,7 +11,7 @@ interface PopUpCardProps {
     onClose: () => void;
 }
 
-const PopUpCard: React.FC<PopUpCardProps> = ({ mealName, category, ingredients, instructions, isFavorite, onClose }) => {
+const PopUpCard: React.FC<PopUpCardProps> = ({ imageUrl, mealName, category, ingredients, instructions, isFavorite, onClose }) => {
     const [favorite, setFavorite] = useState(isFavorite);
 
     const toggleFavorite = () => {
@@ -23,6 +24,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ mealName, category, ingredients, 
                 ×
             </div>
             <div className={styles.card}>
+                <img src={imageUrl} alt={`${mealName}'s image`} />
                 <h2 className={styles.mealName}>{mealName}</h2>
                 <div className={styles.category}>
                     <span>Categories: </span>{category}
