@@ -18,6 +18,7 @@ const RecipePage = () => {
   const [showFavorites, setShowFavorites] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
 
+
   const router = useRouter();
 
   // Fetch all recipes and categories when the component mounts
@@ -35,8 +36,10 @@ const RecipePage = () => {
   }, [showFavorites, favorites]);
 
   const fetchRecipes = async () => {
+    console.log("Fetching recipes");
     try {
-      const response = await http.get("/recipes");
+      // const response = await http.get(`/recipes`);
+      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}`);
       const recipesWithId = response.data.map((recipe: any) => ({
         ...recipe,
         id: recipe._id,
@@ -47,22 +50,8 @@ const RecipePage = () => {
     }
   };
 
-  const fetchFavoriteRecipes = async () => {
-    try {
-      const favoriteRecipes = await Promise.all(
-        favorites.map((favoriteId) =>
-          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
-        )
-      );
-      const recipesWithId = favoriteRecipes.map((recipe: any) => ({
-        ...recipe,
-        id: recipe._id,
-      }));
-      setRecipes(recipesWithId);
-    } catch (error) {
-      console.error("Error fetching favorite recipes:", error);
-    }
-  };
+  useEffect(() => {fetchRecipes()}, [searchQuery, selectedCategories]);
+
 
   const fetchCategories = async () => {
     try {
@@ -78,39 +67,11 @@ const RecipePage = () => {
     }
   };
 
-  // Fetch recipes based on search query or selected categories
-  useEffect(() => {
-    const fetchFilteredRecipes = async () => {
-      try {
-        if (searchQuery) {
-          const response = await http.get(`/recipes?search=${searchQuery}`);
-          const recipesWithId = response.data.map((recipe: any) => ({
-            ...recipe,
-            id: recipe._id,
-          }));
-          setRecipes(recipesWithId);
-          setSelectedCategories([]); // Clear categories when searching
-        } else if (selectedCategories.length > 0) {
-          const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
-          const recipesWithId = response.data.map((recipe: any) => ({
-            ...recipe,
-            id: recipe._id,
-          }));
-          setRecipes(recipesWithId);
-          setSearchQuery(""); // Clear search when filtering by categories
-        } else {
-          fetchRecipes(); // Fetch all recipes if no filters are applied
-        }
-      } catch (error) {
-        console.error("Error fetching filtered recipes:", error);
-      }
-    };
 
-    fetchFilteredRecipes();
-  }, [searchQuery, selectedCategories]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value); // Set search query and clear categories
+    e.preventDefault();
+    setSearchQuery(e.target.value);
   };
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ value: string; label: string; }>) => {
