@@ -40,7 +40,7 @@ export async function updateDocument(collection: string, id: string, updatedDocu
     return result.matchedCount > 0;
 }
 
-export async function getDocumentByCategory(collection: string, category: string, page?: number, pageSize?: number) {
+export async function getDocumentByCategory(collection: string, category: string[], page?: number, pageSize?: number, search?: string | null) {
     const client = await connectDatabase();
     const db = client.db(DB);
     
@@ -48,9 +48,24 @@ export async function getDocumentByCategory(collection: string, category: string
     const limit = pageSize || 0; // Limit if pageSize is provided
     
     const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
-
+    
+    const query: {
+        category: { $in: string[] },
+        $or?: Array<{ instructions?: { $regex: string, $options: string } } | { mealName?: { $regex: string, $options: string } }>
+    } = {
+        category: { $in: category}
+    };
+    
+    // Add the search condition only if searchString is not null or empty
+    if (search) {
+        query.$or = [
+            { instructions: { $regex: search, $options: 'i' } },
+            { mealName: { $regex: search, $options: 'i' } }
+        ];
+    }
+    
     const documents = await db.collection(collection)
-        .find({ category: { $in: [category] } })
+        .find(query)
         .skip(skip)
         .limit(limit)
         .toArray();
@@ -58,7 +73,7 @@ export async function getDocumentByCategory(collection: string, category: string
     return { documents, totalCount };
 }
 
-export async function getAllDocuments(collection: string, page?: number, pageSize?: number) {
+export async function getAllDocuments(collection: string, page?: number, pageSize?: number, search?: string |null) {
     const client = await connectDatabase();
     const db = client.db(DB);
 

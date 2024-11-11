@@ -3,18 +3,18 @@ import { getAllDocuments, insertDocument, getDocumentByCategory } from '@/servic
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
-    const categoryName = searchParams.get('category');
+    const search = searchParams.get('search');
+    const categories = searchParams.get('category')?.split(',') || [];
     const page = searchParams.get('page');
     const pageSize = searchParams.get('pageSize');
     const pageInt = page ? parseInt(page, 10) : undefined;
     const pageSizeInt = pageSize ? parseInt(pageSize, 10) : undefined;
-
     let res: any;
 
-    if (categoryName)
-        res = await getDocumentByCategory("recipes", categoryName, pageInt, pageSizeInt);
+    if (categories)
+        res = await getDocumentByCategory("recipes", categories, pageInt, pageSizeInt, search);
     else
-        res = await getAllDocuments("recipes", pageInt, pageSizeInt);
+        res = await getAllDocuments("recipes", pageInt, pageSizeInt, search);
 
     return NextResponse.json(res);
 }
