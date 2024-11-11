@@ -191,6 +191,7 @@ const RecipePage = () => {
 
       {selectedRecipe && (
         <PopUpCard
+          imageUrl={selectedRecipe.imageUrl}
           mealName={selectedRecipe.mealName}
           category={selectedRecipe.category}
           ingredients={selectedRecipe.ingredients}
