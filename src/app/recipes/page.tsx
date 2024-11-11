@@ -1,16 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import styles from "./page.module.css";
-import Card from "@/components/Card/Card";
-import PopUpCard from "@/components/PopUpCard/PopUpCard";
-import http from "@/services/http";
-import { useRouter } from "next/navigation";
+
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import styles from './page.module.css';
+import Card from '@/components/Card/Card';
+import PopUpCard from '@/components/PopUpCard/PopUpCard';
+import http from '@/services/http';
+import { useRouter } from 'next/navigation';
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
@@ -32,39 +34,49 @@ const RecipePage = () => {
         console.error("Error fetching recipes:", error);
       }
     };
+    const fetchCategories = async () => {
+        try {
+          const response = await http.get('/categories');
+          
+          const categories = response.data.data.documents;
+          
+          const options = categories.map((category: any) => ({
+            value: category.name,
+            label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
+          }));
+          
+          setCategoryOptions(options);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
 
     fetchRecipes();
+    fetchCategories();
   }, []);
 
-  // Fetch categories based on your data
   useEffect(() => {
-    const uniqueCategories = Array.from(
-      new Set(recipes.flatMap((recipe) => recipe.category))
-    );
-    setCategories(uniqueCategories);
-  }, [recipes]);
-
-  useEffect(() => {
-    let filtered = recipes;
+    const fetchRecipesByCategory = async (selectedCategories: string[]) => {
+        try {
+          const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
+          const recipesWithId = response.data.documents.map((recipe: any) => ({
+            ...recipe,
+            id: recipe._id, // Map _id to id
+          }));
+          setRecipes(recipesWithId);
+        } catch (error) {
+          console.error("Error fetching recipes:", error);
+        }
+      };
 
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter((recipe) =>
-        recipe.category.some((cat: string) => selectedCategories.includes(cat))
-      );
+        fetchRecipesByCategory(selectedCategories);
     }
 
     if (searchQuery) {
-      filtered = filtered.filter((recipe) =>
-        recipe.mealName.toLowerCase().includes(searchQuery.toLowerCase())
-      );
     }
-
-    if (showFavorites) {
-      filtered = filtered.filter((recipe) => favorites.includes(recipe.id));
-    }
-
-    setFilteredRecipes(filtered);
-  }, [recipes, selectedCategories, searchQuery, showFavorites, favorites]);
+    
+  }, [recipes, selectedCategories, searchQuery]);
 
   const toggleFavorite = (id: number) => {
     setFavorites((prevFavorites) =>
@@ -85,20 +97,18 @@ const RecipePage = () => {
   return (
     <div>
       <div className={styles.header}>
-        <select
-          multiple
-          onChange={(e) =>
-            setSelectedCategories(
-              Array.from(e.target.selectedOptions, (option) => option.value)
-            )
+      <Select
+          isMulti
+          options={categoryOptions}
+          className="category-select"
+          placeholder="Select categories"
+          onChange={(selectedOptions) =>
+            setSelectedCategories(selectedOptions ? selectedOptions.map(option => option.value) : [])
           }
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+          value={categoryOptions.filter(option =>
+            selectedCategories.includes(option.value)
+          )}
+        />
 
         <input
           type="text"

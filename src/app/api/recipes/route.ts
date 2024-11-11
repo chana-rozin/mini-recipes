@@ -10,9 +10,8 @@ export async function GET(req: Request) {
     const pageInt = page ? parseInt(page, 10) : undefined;
     const pageSizeInt = pageSize ? parseInt(pageSize, 10) : undefined;
     let res: any;
-
+  
     res = await getFilteredDocuments("recipes", categories, pageInt, pageSizeInt, search);
-
     return NextResponse.json(res);
 }
 
