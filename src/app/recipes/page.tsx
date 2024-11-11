@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+import Select,{MultiValue} from 'react-select';
 import styles from './page.module.css';
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
@@ -19,26 +19,8 @@ const RecipePage = () => {
 
   const router = useRouter();
 
-  // Fetch data from the server
+  // Fetch all recipes and categories when the component mounts
   useEffect(() => {
-
-    const fetchCategories = async () => {
-      try {
-        const response = await http.get('/categories');
-
-        const categories = response.data.data.documents;
-
-        const options = categories.map((category: any) => ({
-          value: category.name,
-          label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
-        }));
-
-        setCategoryOptions(options);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
     fetchRecipes();
     fetchCategories();
   }, []);
@@ -46,44 +28,69 @@ const RecipePage = () => {
   const fetchRecipes = async () => {
     try {
       const response = await http.get("/recipes");
-      console.log("before", response.data);
       const recipesWithId = response.data.map((recipe: any) => ({
         ...recipe,
-        id: recipe._id, // Map _id to id
+        id: recipe._id,
       }));
       setRecipes(recipesWithId);
-      console.log("after", recipesWithId);
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await http.get('/categories');
+      const categories = response.data.data.documents;
+      const options = categories.map((category: any) => ({
+        value: category.name,
+        label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
+      }));
+      setCategoryOptions(options);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  // Fetch recipes based on search query or selected categories
   useEffect(() => {
-    const fetchRecipesByCategory = async (selectedCategories: string[]) => {
+    const fetchFilteredRecipes = async () => {
       try {
-        const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
-        const recipesWithId = response.data.map((recipe: any) => ({
-          ...recipe,
-          id: recipe._id, // Map _id to id
-        }));
-        setRecipes(recipesWithId);
+        if (searchQuery) {
+          const response = await http.get(`/recipes?search=${searchQuery}`);
+          const recipesWithId = response.data.map((recipe: any) => ({
+            ...recipe,
+            id: recipe._id,
+          }));
+          setRecipes(recipesWithId);
+          setSelectedCategories([]); // Clear categories when searching
+        } else if (selectedCategories.length > 0) {
+          const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
+          const recipesWithId = response.data.map((recipe: any) => ({
+            ...recipe,
+            id: recipe._id,
+          }));
+          setRecipes(recipesWithId);
+          setSearchQuery(""); // Clear search when filtering by categories
+        } else {
+          fetchRecipes(); // Fetch all recipes if no filters are applied
+        }
       } catch (error) {
-        console.error("Error fetching recipes:", error);
+        console.error("Error fetching filtered recipes:", error);
       }
     };
 
-    if (selectedCategories.length > 0) {
-      console.log('fetchRecipesByCategory');
-      fetchRecipesByCategory(selectedCategories);
-    } else
-      fetchRecipes();
+    fetchFilteredRecipes();
+  }, [searchQuery, selectedCategories]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value); // Set search query and clear categories
+  };
 
-    if (searchQuery) {
-      console.log('searchQuery');
-    }
-
-  }, [ selectedCategories, searchQuery]);
+  const handleCategoryChange = (selectedOptions:MultiValue<{ value: string; label: string; }>) => {
+    const categories = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setSelectedCategories(categories); // Set selected categories and clear search query
+  };
 
   const toggleFavorite = (id: number) => {
     setFavorites((prevFavorites) =>
@@ -109,9 +116,7 @@ const RecipePage = () => {
           options={categoryOptions}
           className="category-select"
           placeholder="Select categories"
-          onChange={(selectedOptions) =>
-            setSelectedCategories(selectedOptions ? selectedOptions.map(option => option.value) : [])
-          }
+          onChange={handleCategoryChange}
           value={categoryOptions.filter(option =>
             selectedCategories.includes(option.value)
           )}
@@ -121,7 +126,7 @@ const RecipePage = () => {
           type="text"
           placeholder="Search"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
         />
 
         <button
