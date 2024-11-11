@@ -40,17 +40,31 @@ export async function updateDocument(collection: string, id: string, updatedDocu
     return result.matchedCount > 0;
 }
 
-export async function getDocumentByCategory(collection: string, category: string, page?: number, pageSize?: number) {
+export async function getFilteredDocuments(collection: string, category?: string[] | null, page?: number, pageSize?: number, search?: string | null) {
     const client = await connectDatabase();
     const db = client.db(DB);
     
     const skip = page ? (page - 1) * pageSize! : 0;  // Skip if page is provided
     const limit = pageSize || 0; // Limit if pageSize is provided
     
-    //const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
-
+    const totalCount = await db.collection(collection).countDocuments({ category: { $in: [category] } });
+    const query: {
+        category?: { $all: string[] },
+        $or?: Array<{ instructions?: { $regex: string, $options: string } } | { mealName?: { $regex: string, $options: string } }>
+    }={};
+    if(category){
+        query.category = { $all: category };
+    }
+    // Add the search condition only if searchString is not null or empty
+    if (search) {
+        query.$or = [
+            { instructions: { $regex: search, $options: 'i' } },
+            { mealName: { $regex: search, $options: 'i' } }
+        ];
+    }
+    
     const documents = await db.collection(collection)
-        .find({ category: { $in: [category] } })
+        .find(query)
         .skip(skip)
         .limit(limit)
         .toArray();

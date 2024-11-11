@@ -1,20 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getAllDocuments, insertDocument, getDocumentByCategory } from '@/services/mongo';
+import { getAllDocuments, insertDocument, getFilteredDocuments } from '@/services/mongo';
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
-    const categoryName = searchParams.get('category');
+    const search = searchParams.get('search');
+    const categories = searchParams.get('category')?.split(',') || null;
     const page = searchParams.get('page');
     const pageSize = searchParams.get('pageSize');
     const pageInt = page ? parseInt(page, 10) : undefined;
     const pageSizeInt = pageSize ? parseInt(pageSize, 10) : undefined;
-
     let res: any;
 
-    if (categoryName)
-        res = await getDocumentByCategory("recipes", categoryName, pageInt, pageSizeInt);
-    else
-        res = await getAllDocuments("recipes", pageInt, pageSizeInt);
+    res = await getFilteredDocuments("recipes", categories, pageInt, pageSizeInt, search);
 
     return NextResponse.json(res);
 }
