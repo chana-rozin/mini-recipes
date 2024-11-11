@@ -1,13 +1,15 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
+import InfiniteScroll from "react-infinite-scroll-component";
 import styles from './page.module.css';
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { debuglog } from 'util';
+const PAGE_SIZE = 6;
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -17,6 +19,9 @@ const RecipePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
 
 
   const router = useRouter();
@@ -38,13 +43,19 @@ const RecipePage = () => {
   const fetchRecipes = async () => {
     console.log("Fetching recipes");
     try {
-      // const response = await http.get(`/recipes`);
-      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}`);
+      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}&page=${page}&pageSize=${PAGE_SIZE}`);
+      if (response.data.length === 0) {
+        setHasMore(false);
+        return;
+      }
+      setHasMore(true);
       const recipesWithId = response.data.map((recipe: any) => ({
         ...recipe,
         id: recipe._id,
       }));
+
       setRecipes(recipesWithId);
+      setPage((prevPage) => prevPage + 1);
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
@@ -66,8 +77,8 @@ const RecipePage = () => {
       console.error("Error fetching favorite recipes:", error);
     }
   };
-  
-  useEffect(() => {fetchRecipes()}, [searchQuery, selectedCategories]);
+
+  useEffect(() => { fetchRecipes() }, [searchQuery, selectedCategories]);
 
   const fetchCategories = async () => {
     try {
@@ -94,8 +105,8 @@ const RecipePage = () => {
   };
 
   const handleToggleFavorite = (id: string) => {
-    const updatedFavorites = toggleFavoriteInLS(id); 
-    setFavorites(updatedFavorites); 
+    const updatedFavorites = toggleFavoriteInLS(id);
+    setFavorites(updatedFavorites);
   };
 
   const handleReadMore = (recipe: any) => {
@@ -151,21 +162,6 @@ const RecipePage = () => {
           Favorites
         </button>
       </div>
-
-      <div className={styles.recipeGrid}>
-        {recipes.map((recipe) => (
-          <Card
-            key={recipe.id}
-            imageUrl={recipe.imageUrl}
-            mealName={recipe.mealName}
-            category={recipe.category}
-            isFavorite={favorites.includes(recipe.id)}
-            onReadMore={() => handleReadMore(recipe)}
-            onFavoriteToggle={() => handleToggleFavorite(recipe.id)}
-          />
-        ))}
-      </div>
-
       {selectedRecipe && (
         <PopUpCard
           imageUrl={selectedRecipe.imageUrl}
@@ -179,9 +175,29 @@ const RecipePage = () => {
         />
       )}
 
-      <div className={styles.pagination}>
+      <InfiniteScroll
+        dataLength={recipes.length}
+        next={fetchRecipes}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}>
+        <div className={styles.recipeGrid}>
+          {recipes.map((recipe) => (
+            <Card
+              key={recipe.id}
+              imageUrl={recipe.imageUrl}
+              mealName={recipe.mealName}
+              category={recipe.category}
+              isFavorite={favorites.includes(recipe.id)}
+              onReadMore={() => handleReadMore(recipe)}
+              onFavoriteToggle={() => handleToggleFavorite(recipe.id)}
+            />
+          ))}
+        </div>
+      </InfiniteScroll>
+
+      {/* <div className={styles.pagination}>
         {`1-${recipes.length} of ${recipes.length}`}
-      </div>
+      </div> */}
     </div>
   );
 };
