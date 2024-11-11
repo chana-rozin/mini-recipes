@@ -108,12 +108,13 @@ const RecipePage = () => {
 
   return (
     <div>
+      <h1 className={styles.pagetitle}>Recipes</h1>
       <div className={styles.header}>
         <Select
           isMulti
           options={categoryOptions}
-          className="category-select"
-          placeholder="Select categories"
+          className={`${styles.categorySelect} category-select`} /* Updated class */
+          placeholder="Pick a Category"
           onChange={handleCategoryChange}
           value={categoryOptions.filter(option =>
             selectedCategories.includes(option.value)
@@ -125,6 +126,7 @@ const RecipePage = () => {
           placeholder="Search"
           value={searchQuery}
           onChange={handleSearchChange}
+          className={styles.headerInput}
         />
 
         <button
