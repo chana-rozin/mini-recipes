@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -22,10 +21,48 @@ const RecipePage = () => {
 
   // Fetch data from the server
   useEffect(() => {
-    const fetchRecipes = async () => {
+
+    const fetchCategories = async () => {
       try {
-        const response = await http.get("/recipes");
-        const recipesWithId = response.data.documents.map((recipe: any) => ({
+        const response = await http.get('/categories');
+
+        const categories = response.data.data.documents;
+
+        const options = categories.map((category: any) => ({
+          value: category.name,
+          label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
+        }));
+
+        setCategoryOptions(options);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchRecipes();
+    fetchCategories();
+  }, []);
+
+  const fetchRecipes = async () => {
+    try {
+      const response = await http.get("/recipes");
+      console.log("before", response.data);
+      const recipesWithId = response.data.map((recipe: any) => ({
+        ...recipe,
+        id: recipe._id, // Map _id to id
+      }));
+      setRecipes(recipesWithId);
+      console.log("after", recipesWithId);
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchRecipesByCategory = async (selectedCategories: string[]) => {
+      try {
+        const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
+        const recipesWithId = response.data.map((recipe: any) => ({
           ...recipe,
           id: recipe._id, // Map _id to id
         }));
@@ -34,49 +71,19 @@ const RecipePage = () => {
         console.error("Error fetching recipes:", error);
       }
     };
-    const fetchCategories = async () => {
-        try {
-          const response = await http.get('/categories');
-          
-          const categories = response.data.data.documents;
-          
-          const options = categories.map((category: any) => ({
-            value: category.name,
-            label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
-          }));
-          
-          setCategoryOptions(options);
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-        }
-      };
-
-    fetchRecipes();
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const fetchRecipesByCategory = async (selectedCategories: string[]) => {
-        try {
-          const response = await http.get(`/recipes?category=${selectedCategories.join(',')}`);
-          const recipesWithId = response.data.documents.map((recipe: any) => ({
-            ...recipe,
-            id: recipe._id, // Map _id to id
-          }));
-          setRecipes(recipesWithId);
-        } catch (error) {
-          console.error("Error fetching recipes:", error);
-        }
-      };
 
     if (selectedCategories.length > 0) {
-        fetchRecipesByCategory(selectedCategories);
-    }
+      console.log('fetchRecipesByCategory');
+      fetchRecipesByCategory(selectedCategories);
+    } else
+      fetchRecipes();
+
 
     if (searchQuery) {
+      console.log('searchQuery');
     }
-    
-  }, [recipes, selectedCategories, searchQuery]);
+
+  }, [ selectedCategories, searchQuery]);
 
   const toggleFavorite = (id: number) => {
     setFavorites((prevFavorites) =>
@@ -97,7 +104,7 @@ const RecipePage = () => {
   return (
     <div>
       <div className={styles.header}>
-      <Select
+        <Select
           isMulti
           options={categoryOptions}
           className="category-select"
@@ -141,7 +148,7 @@ const RecipePage = () => {
       </div>
 
       <div className={styles.recipeGrid}>
-        {filteredRecipes.map((recipe) => (
+        {recipes.map((recipe) => (
           <Card
             key={recipe.id}
             imageUrl={recipe.imageUrl}
@@ -166,7 +173,7 @@ const RecipePage = () => {
       )}
 
       <div className={styles.pagination}>
-        {`1-${filteredRecipes.length} of ${filteredRecipes.length}`}
+        {`1-${recipes.length} of ${recipes.length}`}
       </div>
     </div>
   );
