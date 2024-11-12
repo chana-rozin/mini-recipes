@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect , CSSProperties } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from './page.module.css';
@@ -11,15 +11,12 @@ import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
 const PAGE_SIZE = 10;
-const override: CSSProperties = {
-  display: "block",
-  margin: "auto"
-};
+
 
 const poppins = Poppins({
-  weight: ['300','400', '500', '600', '700'], 
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
-  display: 'swap', 
+  display: 'swap',
 });
 
 const RecipePage = () => {
@@ -32,7 +29,7 @@ const RecipePage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  
+
 
 
   const router = useRouter();
@@ -49,11 +46,11 @@ const RecipePage = () => {
     } else {
       fetchRecipes(false);
     }
-  }, [showFavorites,favorites,searchQuery, selectedCategories]);
+  }, [showFavorites, favorites, searchQuery, selectedCategories]);
 
   const fetchRecipes = async (more: boolean) => {
     try {
-      const currentPage = more ? page+1 : 1;
+      const currentPage = more ? page + 1 : 1;
       const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
       if (response.data.length === 0) {
         setHasMore(false);
@@ -164,7 +161,7 @@ const RecipePage = () => {
 
       <div className={styles.tabs}>
         <button
-          onClick={() =>  setShowFavorites(false)}
+          onClick={() => setShowFavorites(false)}
           className={!showFavorites ? styles.active : ""}
         >
           All Recipes
@@ -191,13 +188,13 @@ const RecipePage = () => {
 
       <InfiniteScroll
         dataLength={recipes.length}
-        next={()=>{fetchRecipes(true)}}
+        next={() => { fetchRecipes(true) }}
         hasMore={hasMore}
-        loader={<BeatLoader
-          color={'#6200ea'}
-          cssOverride={override}
-        />}
-        endMessage={!showFavorites&&
+        loader={!showFavorites &&
+          <div className={styles.loaderWrapper}>
+            <BeatLoader color="#6200ea"  />
+          </div>}
+        endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
             <b>Yay! You have seen it all</b>
           </p>
