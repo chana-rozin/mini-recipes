@@ -42,7 +42,7 @@ const RecipePage = () => {
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page+1 : 1;
-      const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
+      const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
       if (response.data.length === 0) {
         setHasMore(false);
         return;
