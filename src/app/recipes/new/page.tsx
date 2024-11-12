@@ -1,5 +1,6 @@
 "use client";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -79,8 +80,12 @@ function AddRecipePage() {
       setCategoryOptions((prevOptions) => [...prevOptions, newOption]);
       setNewCategory("");
       setIsAddingCategory(false);
-    } catch (error) {
-      console.error("Error adding new category:", error);
+      toast.success("Category added successfully!", {
+        position: 'top-center',
+      });
+      
+    } catch (error:any) {
+      toast.error(`Error Adding Category: ${error.message}`);
     }
   };
 
@@ -89,10 +94,16 @@ function AddRecipePage() {
     try {
       const response = await postRecipe(data);
       console.log("Recipe added successfully", response);
-      router.push("/recipes");
-    } catch (error) {
-      console.error("Error adding recipe", error);
+      toast.success("Recipe added successfully!",{
+        position: 'top-center',
+      });
+      setTimeout(() => {
+        router.push("/recipes");
+      }, 3000);
+    } catch (error:any) {
+      toast.error(`Error Adding Recipe: ${error.message}`);
     }
+
   };
 
   const addIngredient = () => {
@@ -288,6 +299,7 @@ function AddRecipePage() {
           </button>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 }
