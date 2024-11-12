@@ -46,8 +46,17 @@ const RecipePage = () => {
     } else {
       fetchRecipes(false);
     }
-  }, [showFavorites, favorites, searchQuery, selectedCategories]);
-
+  }, [showFavorites]);
+  useEffect(() => {
+    if(!showFavorites) {
+      fetchRecipes(false);
+    }
+  },[searchQuery, selectedCategories]);
+  useEffect(()=>{
+    if (showFavorites) {
+      fetchFavoriteRecipes();
+    }
+  },[favorites])
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page + 1 : 1;
