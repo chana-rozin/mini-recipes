@@ -70,6 +70,9 @@ const RecipePage = () => {
         setHasMore(false);
       }
       else {
+        if(response.data.length < PAGE_SIZE) {
+          setHasMore(false);
+        }
         setHasMore(true);
         recipesWithId = response.data.map((recipe: any) => ({
           ...recipe,
