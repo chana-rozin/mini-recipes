@@ -1,14 +1,26 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , CSSProperties } from 'react';
 import Select, { MultiValue } from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from './page.module.css';
+import BeatLoader from "react-spinners/BeatLoader";
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
+import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 10;
+const override: CSSProperties = {
+  display: "block",
+  margin: "auto"
+};
+
+const poppins = Poppins({
+  weight: ['300','400', '500', '600', '700'], 
+  subsets: ['latin'],
+  display: 'swap', 
+});
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -20,7 +32,7 @@ const RecipePage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
+  
 
 
   const router = useRouter();
@@ -120,7 +132,7 @@ const RecipePage = () => {
   };
 
   return (
-    <div>
+    <div className={poppins.className}>
       <h1 className={styles.pagetitle}>Recipes</h1>
       <div className={styles.header}>
         <Select
@@ -181,8 +193,11 @@ const RecipePage = () => {
         dataLength={recipes.length}
         next={()=>{fetchRecipes(true)}}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
-        endMessage={
+        loader={<BeatLoader
+          color={'#6200ea'}
+          cssOverride={override}
+        />}
+        endMessage={!showFavorites&&
           <p style={{ textAlign: 'center' }}>
             <b>Yay! You have seen it all</b>
           </p>
@@ -203,10 +218,6 @@ const RecipePage = () => {
           ))}
         </div>
       </InfiniteScroll>
-
-      <div className={styles.pagination}>
-        {`1-${recipes.length} of ${recipes.length}`}
-      </div>
     </div>
   );
 };
