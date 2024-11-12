@@ -17,3 +17,19 @@ export const toggleFavorite = (id: string): string[] => {
   saveFavorites(updatedFavorites);
   return updatedFavorites;
 };
+
+export const storeRecipes = (data: {recipes:{}[], url:string}) => {
+  localStorage.setItem('recipes', JSON.stringify({
+    url: data.url,
+    data: data.recipes,
+    storedTime: Date.now()
+  }));
+}
+
+export const getStoredRecipes = (): {
+  url: string,
+  data: {}[],
+  storedTime: number} | null => {
+  const storedRecipes = localStorage.getItem('recipes');
+  return storedRecipes ? JSON.parse(storedRecipes) : null;
+};

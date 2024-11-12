@@ -12,6 +12,8 @@ import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { getRecipes } from '@/services/recipes.ts';
+
 const PAGE_SIZE = 10;
 
 
