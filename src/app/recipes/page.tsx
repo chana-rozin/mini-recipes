@@ -31,8 +31,6 @@ const RecipePage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
-
 
   const router = useRouter();
 
@@ -65,24 +63,30 @@ const RecipePage = () => {
     try {
       const currentPage = more ? page + 1 : 1;
       const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
+      let recipesWithId:[]=[];
       if (response.data.length === 0) {
         setHasMore(false);
-        return;
-      }
-      setHasMore(true);
-      const recipesWithId = response.data.map((recipe: any) => ({
-        ...recipe,
-        id: recipe._id,
-      }));
-      if (more) {
-        setRecipes(prevState => [...prevState, ...recipesWithId]);
-        setPage(page + 1);
       }
       else {
-        setRecipes(recipesWithId);
-        setPage(1);
+        setHasMore(true);
+        recipesWithId = response.data.map((recipe: any) => ({
+          ...recipe,
+          id: recipe._id,
+        }));
       }
-    } catch (error:any) {
+      
+        if (more) {
+          setRecipes(prevState => [...prevState, ...recipesWithId]);
+          setPage(page + 1);
+        }
+        else {
+
+          setRecipes(recipesWithId);
+          setPage(1);
+        }
+
+
+    } catch (error: any) {
       toast.error(`Error fetching recipes: ${error.message}`);
     }
   };
@@ -99,7 +103,7 @@ const RecipePage = () => {
         id: recipe._id,
       }));
       setRecipes(recipesWithId);
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(`Error fetching favorite recipes: ${error.message}`);
     }
   };
@@ -113,7 +117,7 @@ const RecipePage = () => {
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
       }));
       setCategoryOptions(options);
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(`Error fetching categories: ${error.message}`);
     }
   };
@@ -171,7 +175,7 @@ const RecipePage = () => {
             }),
             menu: (base) => ({
               ...base,
-              zIndex: 9999, 
+              zIndex: 9999,
               borderRadius: '4px',
               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
             }),
@@ -260,13 +264,13 @@ const RecipePage = () => {
         dataLength={recipes.length}
         next={() => { fetchRecipes(true) }}
         hasMore={hasMore}
-        loader={!showFavorites && 
+        loader={!showFavorites &&
           <div className={styles.loaderWrapper}>
             <BeatLoader color="#6200ea" />
           </div>}
         endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all :)</b>
+            {recipes.length===0?<b>Sorry... looks like we found nothing today :(</b>:<b>Yay! You have seen it all :)</b>}
           </p>
         }
       >
