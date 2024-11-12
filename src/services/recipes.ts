@@ -16,3 +16,8 @@ export const getRecipes = async (selectedCategories:string[] = [], searchQuery:s
     console.log('get from server');
     return response.data;
 }
+
+export const getRecipe = async (recipeId: string): Promise<any>=>{
+    const res = await http.get(`recipes/${recipeId}`);
+    return res.data;
+}

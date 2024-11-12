@@ -8,11 +8,11 @@ import styles from './page.module.css';
 import BeatLoader from "react-spinners/BeatLoader";
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
-import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
-import { getRecipes } from '@/services/recipes.ts';
+import { getRecipes, getRecipe } from '@/services/recipes.ts';
+import { getCategories } from '@/services/categories.ts';
 
 const PAGE_SIZE = 10;
 
@@ -64,31 +64,31 @@ const RecipePage = () => {
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page + 1 : 1;
-      const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
-      let recipesWithId:[]=[];
-      if (response.data.length === 0) {
+      const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
+      let recipesWithId: [] = [];
+      if (response.length === 0) {
         setHasMore(false);
       }
       else {
-        if(response.data.length < PAGE_SIZE) {
+        if (response.length < PAGE_SIZE) {
           setHasMore(false);
         }
         setHasMore(true);
-        recipesWithId = response.data.map((recipe: any) => ({
+        recipesWithId = response.map((recipe: any) => ({
           ...recipe,
           id: recipe._id,
         }));
       }
-      
-        if (more) {
-          setRecipes(prevState => [...prevState, ...recipesWithId]);
-          setPage(page + 1);
-        }
-        else {
 
-          setRecipes(recipesWithId);
-          setPage(1);
-        }
+      if (more) {
+        setRecipes(prevState => [...prevState, ...recipesWithId]);
+        setPage(page + 1);
+      }
+      else {
+
+        setRecipes(recipesWithId);
+        setPage(1);
+      }
 
 
     } catch (error: any) {
@@ -100,7 +100,7 @@ const RecipePage = () => {
     try {
       const favoriteRecipes = await Promise.all(
         favorites.map((favoriteId) =>
-          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
+          getRecipe(favoriteId)
         )
       );
       const recipesWithId = favoriteRecipes.map((recipe: any) => ({
@@ -115,8 +115,7 @@ const RecipePage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await http.get('/categories');
-      const categories = response.data.data.documents;
+      const categories = await getCategories();
       const options = categories.map((category: any) => ({
         value: category.name,
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
@@ -275,7 +274,7 @@ const RecipePage = () => {
           </div>}
         endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
-            {recipes.length===0?<b>Sorry... looks like we found nothing today :(</b>:<b>Yay! You have seen it all :)</b>}
+            {recipes.length === 0 ? <b>Sorry... looks like we found nothing today :(</b> : <b>Yay! You have seen it all :)</b>}
           </p>
         }
       >
