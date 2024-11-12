@@ -182,7 +182,7 @@ const RecipePage = () => {
         next={()=>{fetchRecipes(true)}}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        endMessage={
+        endMessage={!showFavorites&&
           <p style={{ textAlign: 'center' }}>
             <b>Yay! You have seen it all</b>
           </p>
@@ -203,10 +203,6 @@ const RecipePage = () => {
           ))}
         </div>
       </InfiniteScroll>
-
-      <div className={styles.pagination}>
-        {`1-${recipes.length} of ${recipes.length}`}
-      </div>
     </div>
   );
 };
