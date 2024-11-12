@@ -64,8 +64,8 @@ const RecipePage = () => {
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page + 1 : 1;
-     const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
-      let recipesWithId:[]=[];
+      const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
+      let recipesWithId: [] = [];
       if (response.length === 0) {
         setHasMore(false);
       }
@@ -76,16 +76,16 @@ const RecipePage = () => {
           id: recipe._id,
         }));
       }
-      
-        if (more) {
-          setRecipes(prevState => [...prevState, ...recipesWithId]);
-          setPage(page + 1);
-        }
-        else {
 
-          setRecipes(recipesWithId);
-          setPage(1);
-        }
+      if (more) {
+        setRecipes(prevState => [...prevState, ...recipesWithId]);
+        setPage(page + 1);
+      }
+      else {
+
+        setRecipes(recipesWithId);
+        setPage(1);
+      }
 
 
     } catch (error: any) {
@@ -262,6 +262,8 @@ const RecipePage = () => {
         />
       )}
 
+      <ToastContainer />
+
       <InfiniteScroll
         dataLength={recipes.length}
         next={() => { fetchRecipes(true) }}
@@ -272,7 +274,7 @@ const RecipePage = () => {
           </div>}
         endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
-            {recipes.length===0?<b>Sorry... looks like we found nothing today :(</b>:<b>Yay! You have seen it all :)</b>}
+            {recipes.length === 0 ? <b>Sorry... looks like we found nothing today :(</b> : <b>Yay! You have seen it all :)</b>}
           </p>
         }
       >
