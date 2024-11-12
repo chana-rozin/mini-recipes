@@ -9,6 +9,13 @@ import './form.css';
 import { useRouter } from 'next/navigation';
 import { IoCaretBackOutline } from "react-icons/io5";
 import http from '@/services/http'; 
+import { Poppins } from 'next/font/google';
+
+const poppins = Poppins({
+  weight: ['300','400', '500', '600', '700'], 
+  subsets: ['latin'],
+  display: 'swap', 
+});
 
 const recipeSchema = z.object({
   mealName: z.string().min(1, 'Meal name is required'),
@@ -68,6 +75,7 @@ function AddRecipePage() {
   };
 
   return (
+    <div className={poppins.className}>
     <div className="form-container">
       <button className="back-button" onClick={() => router.push('/recipes')}>
         <IoCaretBackOutline />
@@ -197,6 +205,7 @@ function AddRecipePage() {
         </div>
         <button type="submit" className="submit-button">Add</button>
       </form>
+    </div>
     </div>
   );
 }
