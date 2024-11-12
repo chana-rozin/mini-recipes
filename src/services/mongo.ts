@@ -79,15 +79,13 @@ export async function getAllDocuments(collection: string, page?: number, pageSiz
     const skip = page ? (page - 1) * pageSize! : 0;
     const limit = pageSize || 0;
 
-    const totalCount = await db.collection(collection).countDocuments();
-
     const documents = await db.collection(collection)
         .find()
         .skip(skip)
         .limit(limit)
         .toArray();
 
-    return { documents, totalCount };
+    return documents;
 }
 
 export async function getDocumentById(collection: string, id: string) {

@@ -6,11 +6,11 @@ import styles from './page.module.css';
 import BeatLoader from "react-spinners/BeatLoader";
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
-import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
-import { getRecipes } from '@/services/recipes.ts';
+import { getRecipes, getRecipe } from '@/services/recipes';
+import { getCategories } from '@/services/categories';
 
 const PAGE_SIZE = 10;
 
@@ -87,8 +87,8 @@ const RecipePage = () => {
   const fetchFavoriteRecipes = async () => {
     try {
       const favoriteRecipes = await Promise.all(
-        favorites.map((favoriteId) =>
-          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
+        favorites.map(favoriteId =>
+          getRecipe(favoriteId)
         )
       );
       const recipesWithId = favoriteRecipes.map((recipe: any) => ({
@@ -103,8 +103,8 @@ const RecipePage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await http.get('/categories');
-      const categories = response.data.data.documents;
+      const response = await getCategories();
+      const categories = response;
       const options = categories.map((category: any) => ({
         value: category.name,
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),

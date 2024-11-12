@@ -8,8 +8,9 @@ import Select from 'react-select';
 import './form.css';
 import { useRouter } from 'next/navigation';
 import { IoCaretBackOutline } from "react-icons/io5";
-import http from '@/services/http'; 
 import { Poppins } from 'next/font/google';
+import { getCategories, postCategory } from '@/services/categories';
+import { postRecipe } from '@/services/recipes';
 
 const poppins = Poppins({
   weight: ['300','400', '500', '600', '700'], 
@@ -47,8 +48,7 @@ function AddRecipePage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await http.get("/categories");
-        const categories = response.data.data.documents;
+        const categories = await getCategories();
         const options = categories.map((category: any) => ({
           value: category.name,
           label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
@@ -69,11 +69,11 @@ function AddRecipePage() {
   
     try {
       console.log("Adding new category:", newCategory); // Debugging log
-      const response = await http.post("/categories", { name: newCategory });
-      console.log(response.data.data.name);
+      const response = await postCategory(newCategory);
+      console.log(response.name);
       
       const newOption = {
-        value: response.data.data.name,
+        value: response.name,
         label: newCategory.charAt(0).toUpperCase() + newCategory.slice(1),
       };
   
@@ -88,8 +88,8 @@ function AddRecipePage() {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await http.post("/recipes", data);
-      console.log("Recipe added successfully", response.data);
+      const response = await postRecipe(data);
+      console.log("Recipe added successfully", response);
       router.push("/recipes");
     } catch (error) {
       console.error("Error adding recipe", error);
