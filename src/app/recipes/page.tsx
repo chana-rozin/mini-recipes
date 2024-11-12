@@ -10,9 +10,9 @@ import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
-import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage.ts';
-import { getRecipes, getRecipe } from '@/services/recipes.ts';
-import { getCategories } from '@/services/categories.ts';
+import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { getRecipes, getRecipe } from '@/services/recipes';
+import { getCategories } from '@/services/categories';
 
 const PAGE_SIZE = 10;
 
