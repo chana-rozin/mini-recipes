@@ -8,7 +8,6 @@ import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
-import { debuglog } from 'util';
 const PAGE_SIZE = 6;
 
 const RecipePage = () => {
@@ -26,7 +25,7 @@ const RecipePage = () => {
 
   const router = useRouter();
 
-  // Fetch all recipes and categories when the component mounts
+  //Fetch all recipes and categories when the component mounts
   useEffect(() => {
     fetchCategories();
     setFavorites(getFavorites());
@@ -34,16 +33,15 @@ const RecipePage = () => {
 
   useEffect(() => {
     if (showFavorites) {
-      fetchFavoriteRecipes();  // Fetch favorite recipes when showing favorites
+      fetchFavoriteRecipes();
     } else {
-      fetchRecipes(false);  // Fetch all recipes when not showing favorites
+      fetchRecipes(false);
     }
-  }, [showFavorites, favorites]);
+  }, [showFavorites,favorites,searchQuery, selectedCategories]);
 
-  const fetchRecipes = async (more:boolean=true) => {
-    console.log("Fetching recipes");
+  const fetchRecipes = async (more: boolean) => {
     try {
-      const currentPage=more?page:1;
+      const currentPage = more ? page+1 : 1;
       const response = await http.get(`/recipes?category=${selectedCategories.join(", ")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
       if (response.data.length === 0) {
         setHasMore(false);
@@ -54,11 +52,11 @@ const RecipePage = () => {
         ...recipe,
         id: recipe._id,
       }));
-      if(more){
-        setRecipes(prevState => [...prevState,...recipesWithId]);   
+      if (more) {
+        setRecipes(prevState => [...prevState, ...recipesWithId]);
         setPage(page + 1);
       }
-      else{
+      else {
         setRecipes(recipesWithId);
         setPage(1);
       }
@@ -83,8 +81,6 @@ const RecipePage = () => {
       console.error("Error fetching favorite recipes:", error);
     }
   };
-
-  useEffect(() => { fetchRecipes(false) }, [searchQuery, selectedCategories]);
 
   const fetchCategories = async () => {
     try {
@@ -156,7 +152,7 @@ const RecipePage = () => {
 
       <div className={styles.tabs}>
         <button
-          onClick={() => setShowFavorites(false)}
+          onClick={() =>  setShowFavorites(false)}
           className={!showFavorites ? styles.active : ""}
         >
           All Recipes
@@ -183,7 +179,7 @@ const RecipePage = () => {
 
       <InfiniteScroll
         dataLength={recipes.length}
-        next={fetchRecipes}
+        next={()=>{fetchRecipes(true)}}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
         endMessage={
@@ -191,10 +187,10 @@ const RecipePage = () => {
             <b>Yay! You have seen it all</b>
           </p>
         }
-        >
-          
+      >
+
         <div className={styles.recipeGrid}>
-          {recipes.map((recipe,index) => (
+          {recipes.map((recipe, index) => (
             <Card
               key={index}
               imageUrl={recipe.imageUrl}
@@ -208,9 +204,9 @@ const RecipePage = () => {
         </div>
       </InfiniteScroll>
 
-      {/* <div className={styles.pagination}>
+      <div className={styles.pagination}>
         {`1-${recipes.length} of ${recipes.length}`}
-      </div> */}
+      </div>
     </div>
   );
 };
