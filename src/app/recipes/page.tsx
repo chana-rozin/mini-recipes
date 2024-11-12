@@ -100,7 +100,7 @@ const RecipePage = () => {
     try {
       const favoriteRecipes = await Promise.all(
         favorites.map((favoriteId) =>
-          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
+          getRecipe(favoriteId)
         )
       );
       const recipesWithId = favoriteRecipes.map((recipe: any) => ({
@@ -115,8 +115,7 @@ const RecipePage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await http.get('/categories');
-      const categories = response.data.data.documents;
+      const categories = await getCategories();
       const options = categories.map((category: any) => ({
         value: category.name,
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
