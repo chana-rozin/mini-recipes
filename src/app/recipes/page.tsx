@@ -10,9 +10,9 @@ import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
-import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage.ts';
-import { getRecipes, getRecipe } from '@/services/recipes.ts';
-import { getCategories } from '@/services/categories.ts';
+import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { getRecipes, getRecipe } from '@/services/recipes';
+import { getCategories } from '@/services/categories';
 
 const PAGE_SIZE = 10;
 
@@ -66,16 +66,14 @@ const RecipePage = () => {
       const currentPage = more ? page + 1 : 1;
       const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
       let recipesWithId: [] = [];
-      if (response.length === 0) {
+      if (response.length < PAGE_SIZE) {
         setHasMore(false);
       }
-      else {
-        setHasMore(true);
-        recipesWithId = response.map((recipe: any) => ({
-          ...recipe,
-          id: recipe._id,
-        }));
-      }
+      setHasMore(true);
+      recipesWithId = response.map((recipe: any) => ({
+        ...recipe,
+        id: recipe._id,
+      }));
 
       if (more) {
         setRecipes(prevState => [...prevState, ...recipesWithId]);
@@ -96,7 +94,7 @@ const RecipePage = () => {
   const fetchFavoriteRecipes = async () => {
     try {
       const favoriteRecipes = await Promise.all(
-        favorites.map(favoriteId =>
+        favorites.map((favoriteId) =>
           getRecipe(favoriteId)
         )
       );
@@ -112,8 +110,7 @@ const RecipePage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await getCategories();
-      const categories = response;
+      const categories = await getCategories();
       const options = categories.map((category: any) => ({
         value: category.name,
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
