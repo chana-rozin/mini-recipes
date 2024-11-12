@@ -31,7 +31,7 @@ const RecipePage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
+  const [loading, setLoading] = useState(false);
 
 
   const router = useRouter();
@@ -54,7 +54,7 @@ const RecipePage = () => {
     fetchRecipes(false);
     setShowFavorites(false);
   }, [searchQuery, selectedCategories]);
-  
+
   useEffect(() => {
     if (showFavorites) {
       fetchFavoriteRecipes();
@@ -260,7 +260,7 @@ const RecipePage = () => {
         dataLength={recipes.length}
         next={() => { fetchRecipes(true) }}
         hasMore={hasMore}
-        loader={!showFavorites &&
+        loader={!showFavorites && 
           <div className={styles.loaderWrapper}>
             <BeatLoader color="#6200ea" />
           </div>}

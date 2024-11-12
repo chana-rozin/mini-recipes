@@ -95,7 +95,9 @@ function AddRecipePage() {
     try {
       const response = await http.post("/recipes", data);
       console.log("Recipe added successfully", response.data);
-      toast.success("Recipe added successfully!");
+      toast.success("Recipe added successfully!",{
+        position: 'top-center',
+      });
       setTimeout(() => {
         router.push("/recipes");
       }, 3000);
