@@ -8,7 +8,7 @@ import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 10;
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -20,7 +20,7 @@ const RecipePage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
+  
 
 
   const router = useRouter();
