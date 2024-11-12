@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , CSSProperties } from 'react';
 import Select, { MultiValue } from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from './page.module.css';
@@ -10,6 +10,10 @@ import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
 const PAGE_SIZE = 10;
+const override: CSSProperties = {
+  display: "block",
+  margin: "auto"
+};
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -182,7 +186,10 @@ const RecipePage = () => {
         dataLength={recipes.length}
         next={()=>{fetchRecipes(true)}}
         hasMore={hasMore}
-        loader={<BeatLoader/>}
+        loader={<BeatLoader
+          color={'#6200ea'}
+          cssOverride={override}
+        />}
         endMessage={!showFavorites&&
           <p style={{ textAlign: 'center' }}>
             <b>Yay! You have seen it all</b>
