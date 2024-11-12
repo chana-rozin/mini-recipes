@@ -48,15 +48,14 @@ const RecipePage = () => {
     }
   }, [showFavorites]);
   useEffect(() => {
-    if(!showFavorites) {
-      fetchRecipes(false);
-    }
-  },[searchQuery, selectedCategories]);
-  useEffect(()=>{
+    fetchRecipes(false);
+    setShowFavorites(false);
+  }, [searchQuery, selectedCategories]);
+  useEffect(() => {
     if (showFavorites) {
       fetchFavoriteRecipes();
     }
-  },[favorites])
+  }, [favorites])
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page + 1 : 1;
@@ -201,7 +200,7 @@ const RecipePage = () => {
         hasMore={hasMore}
         loader={!showFavorites &&
           <div className={styles.loaderWrapper}>
-            <BeatLoader color="#6200ea"  />
+            <BeatLoader color="#6200ea" />
           </div>}
         endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
