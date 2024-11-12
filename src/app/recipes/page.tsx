@@ -8,8 +8,15 @@ import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
 import { useRouter } from 'next/navigation';
+import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
 const PAGE_SIZE = 10;
+
+const poppins = Poppins({
+  weight: ['300','400', '500', '600', '700'], 
+  subsets: ['latin'],
+  display: 'swap', 
+});
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -121,7 +128,7 @@ const RecipePage = () => {
   };
 
   return (
-    <div>
+    <div className={poppins.className}>
       <h1 className={styles.pagetitle}>Recipes</h1>
       <div className={styles.header}>
         <Select

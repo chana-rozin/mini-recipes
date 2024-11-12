@@ -68,7 +68,7 @@
   align-items: center;
 }
 .hashtags {
-  color: rgb(80, 80, 251);
+  color: #6200ea;
   grid-row: 2/3;
   grid-column:1/2 ;
 }

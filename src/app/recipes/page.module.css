@@ -4,12 +4,11 @@
   background-color: #f8f8f8;
 }
 
-/* Ensure consistent width and spacing for search boxes */
 .header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 2rem; /* Increase space between dropdown and search input */
+  gap: 2rem; 
   padding-left: 30px;
   padding-right: 43px;
   padding-top: 10px;
@@ -23,7 +22,6 @@
   color: #333;
 }
 
-/* Category dropdown styling with consistent width */
 .category-select {
   width: 250px; /* Set fixed width */
   height: 40px;
@@ -35,7 +33,6 @@
   margin-right: 20px;
 }
 
-/* Search input styling with an inline SVG icon */
 .header input {
   width: 170px; /* Set same fixed width as the category select */
   padding: 6.2px 6px 6.2px 6px; /* Padding for space around icon */
@@ -50,7 +47,6 @@
   background-size: 1rem; /* Adjust icon size */
 }
 
-/* Add Recipe button styling */
 .addRecipeButton {
   width: 170px;
   padding: 6.2px 4px 6.2px 4px;
@@ -66,16 +62,19 @@
 }
 
 .addRecipeButton:hover {
-  background-color: #5b03d7; /* Darker shade of purple for hover */
+  background-color: #4e00bc; /* Darker shade of purple for hover */
 }
 
-/* Tabs styling */
 .tabs {
   display: flex;
   gap: 2rem;
   margin-bottom: 1.5rem;
   padding-left: 30px;
   border-bottom: 2px solid #e0e0e0;
+  position: sticky; 
+  top: 0;
+  z-index: 100; 
+  background-color: var(--background);
 }
 
 .tabs button {
@@ -105,14 +104,13 @@
   background-color: #6200ea; /* Purple underline */
 }
 
-/* Recipe grid layout */
 .recipeGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1.5rem;
   padding: 30px;
 }
-/* Page title (Recipes header) styling */
+
 .pagetitle {
   font-size: 2rem;
   font-weight: bold;
@@ -120,7 +118,7 @@
   padding-left: 30px;
   padding-top: 60px;
 }
-/* Adjustments for mobile responsiveness if needed */
+
 @media (max-width: 600px) {
   .header input,
   .category-select {
