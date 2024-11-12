@@ -34,17 +34,26 @@
 }
 
 .header input {
-  width: 170px; /* Set same fixed width as the category select */
-  padding: 6.2px 6px 6.2px 6px; /* Padding for space around icon */
+  width: 170px;
+  padding: 6.2px 6px 6.2px 6px; 
   font-size: 1rem;
   color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fff;
   background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23666" width="16" height="16" viewBox="0 0 24 24"%3E%3Cpath d="M10 2a8 8 0 1 0 4.906 14.32l4.387 4.387 1.414-1.414-4.387-4.387A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4z"/%3E%3C/svg%3E');
-  background-position: right 10px center; /* Position icon on the right */
+  background-position: right 10px center; 
   background-repeat: no-repeat;
-  background-size: 1rem; /* Adjust icon size */
+  background-size: 1rem; 
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+}
+
+.header input:focus {
+  border-color: #6200ea;
+  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+  outline: none;
 }
 
 .addRecipeButton {
@@ -69,6 +78,7 @@
   display: flex;
   gap: 2rem;
   margin-bottom: 1.5rem;
+  margin-top: 8px;
   padding-left: 30px;
   border-bottom: 2px solid #e0e0e0;
   position: sticky; 
@@ -117,6 +127,12 @@
   color: black; /* Matches the purple theme */
   padding-left: 30px;
   padding-top: 60px;
+}
+
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 600px) {
