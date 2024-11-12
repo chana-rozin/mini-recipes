@@ -151,3 +151,30 @@
   font-size: 14px;
   margin-top: 4px;
 }
+.categories-group{
+  display: grid;
+  grid-template-columns: 90% 10%;
+}
+.categories-group input[type="text"] {
+  grid-column: 1/2;
+}
+
+.categories-group button {
+  grid-column: 2/3;
+}
+
+.new-category-input{
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 10px;
+}
+.new-category-input input[type="text"] {
+  grid-column: 1/2;
+  width: 100%;
+  margin: 0;
+}
+
+.new-category-input button {
+  grid-column: 2/3;
+  width: 100%;
+}
