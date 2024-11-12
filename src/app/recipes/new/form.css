@@ -80,6 +80,33 @@
   gap: 8px;
 }
 
+.category-container {
+  display: flex;
+  align-items: center; /* Vertically center the elements */
+  gap: 10px; /* Space between the select and the button */
+  width: 100%;
+}
+
+.add-category-button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  color: #6200ea;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+  padding: 0;
+}
+
+.add-category-button:hover {
+  color: #4e00bc;
+  transform: scale(1.1); /* Subtle hover animation */
+}
+
+.add-category-button:focus {
+  outline: none;
+}
+
+
 .add-button, .remove-button {
   background-color: #6200ea;
   color: white;

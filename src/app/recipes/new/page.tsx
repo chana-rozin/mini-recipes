@@ -206,7 +206,7 @@ function AddRecipePage() {
             className="add-category-button"
             onClick={() => setIsAddingCategory(!isAddingCategory)}
           >
-            + Add new category
+            + 
           </button>
           {isAddingCategory && (
             <div className="new-category-input">
