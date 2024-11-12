@@ -10,6 +10,8 @@ import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { getRecipes } from '@/services/recipes.ts';
+
 const PAGE_SIZE = 10;
 const override: CSSProperties = {
   display: "block",
@@ -54,13 +56,14 @@ const RecipePage = () => {
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page+1 : 1;
-      const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
-      if (response.data.length === 0) {
+      // const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
+      const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
+      if (response.length === 0) {
         setHasMore(false);
         return;
       }
       setHasMore(true);
-      const recipesWithId = response.data.map((recipe: any) => ({
+      const recipesWithId = response.map((recipe: any) => ({
         ...recipe,
         id: recipe._id,
       }));
