@@ -9,14 +9,16 @@ interface PopUpCardProps {
     instructions: string;
     isFavorite: boolean;
     onClose: () => void;
+    onFavoriteToggle: ()=> void;
 }
 
-const PopUpCard: React.FC<PopUpCardProps> = ({ imageUrl, mealName, category, ingredients, instructions, isFavorite, onClose }) => {
+const PopUpCard: React.FC<PopUpCardProps> = ({ imageUrl, mealName, category, ingredients, instructions, isFavorite, onClose , onFavoriteToggle}) => {
     const [favorite, setFavorite] = useState(isFavorite);
     const cardRef = useRef<HTMLDivElement>(null);
 
     const toggleFavorite = () => {
         setFavorite(!favorite);
+        onFavoriteToggle();
     };
 
     // Handle click outside the card to close the popup

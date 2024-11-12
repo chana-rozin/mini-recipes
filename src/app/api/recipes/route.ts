@@ -4,13 +4,14 @@ import { getAllDocuments, insertDocument, getFilteredDocuments } from '@/service
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
-    const categories = searchParams.get('category')?.split(',') || null;
+    let categories:string[]|string|null= searchParams.get('category');
+    categories = categories===""?null:categories?.split(',')||null;
     const page = searchParams.get('page');
     const pageSize = searchParams.get('pageSize');
     const pageInt = page ? parseInt(page, 10) : undefined;
     const pageSizeInt = pageSize ? parseInt(pageSize, 10) : undefined;
     let res: any;
-  
+
     res = await getFilteredDocuments("recipes", categories, pageInt, pageSizeInt, search);
     return NextResponse.json(res);
 }
