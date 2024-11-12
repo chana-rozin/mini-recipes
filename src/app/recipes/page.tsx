@@ -71,7 +71,7 @@ const RecipePage = () => {
       }
       else {
         setHasMore(true);
-        recipesWithId = response.data.map((recipe: any) => ({
+        recipesWithId = response.map((recipe: any) => ({
           ...recipe,
           id: recipe._id,
         }));

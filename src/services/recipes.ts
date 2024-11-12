@@ -1,6 +1,5 @@
 import http from "./http";
 import { storeRecipes, getStoredRecipes} from "./localStorage";
-import { storeRecipes, getStoredRecipes} from "./localStorage.ts";
 import {isWithinLastFiveMinutes} from "../../utils/isWithinLastFiveMinutes";
 
 export const getRecipes = async (selectedCategories:string[] = [], searchQuery:string = "", page = 0, pageSize=10): Promise<any>=>{
