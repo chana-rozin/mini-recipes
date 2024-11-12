@@ -198,6 +198,8 @@ function AddRecipePage() {
                 field.value ? field.value.includes(option.value) : false
               )}
             />
+          )}
+        />
 
           <button
             type="button"
