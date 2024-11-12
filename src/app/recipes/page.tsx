@@ -10,7 +10,7 @@ import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
-import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage.ts';
 import { getRecipes, getRecipe } from '@/services/recipes.ts';
 import { getCategories } from '@/services/categories.ts';
 
@@ -100,7 +100,7 @@ const RecipePage = () => {
     try {
       const favoriteRecipes = await Promise.all(
         favorites.map((favoriteId) =>
-          getRecipe(favoriteId)
+          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
         )
       );
       const recipesWithId = favoriteRecipes.map((recipe: any) => ({
@@ -115,7 +115,8 @@ const RecipePage = () => {
 
   const fetchCategories = async () => {
     try {
-      const categories = await getCategories();
+      const response = await http.get('/categories');
+      const categories = response.data.data.documents;
       const options = categories.map((category: any) => ({
         value: category.name,
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
@@ -263,6 +264,8 @@ const RecipePage = () => {
           onFavoriteToggle={() => handleToggleFavorite(selectedRecipe.id)}
         />
       )}
+
+      <ToastContainer />
 
       <InfiniteScroll
         dataLength={recipes.length}

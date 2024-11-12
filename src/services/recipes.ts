@@ -1,6 +1,6 @@
 import http from "./http";
 import { storeRecipes, getStoredRecipes} from "./localStorage.ts";
-import {isWithinLastFiveMinutes} from "../../utils/isWithinLastFiveMinutes";
+import {isWithinLastFiveMinutes} from "../../utils/isWithinLastFiveMinutes.ts";
 
 export const getRecipes = async (selectedCategories:string[] = [], searchQuery:string = "", page = 0, pageSize=10): Promise<any>=>{
     const url = `/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${page}&pageSize=${pageSize}`
@@ -17,7 +17,12 @@ export const getRecipes = async (selectedCategories:string[] = [], searchQuery:s
     return response.data;
 }
 
-export const getRecipe = async (recipeId: string): Promise<any>=>{
-    const res = await http.get(`recipes/${recipeId}`);
+export const getRecipe = async (id: string): Promise<any> => {
+    const res = await http.get(`/recipes/${id}`);
     return res.data;
+}
+
+export const postRecipe = async (data: any): Promise<any> => {
+    const response = await http.post("/recipes", data);
+    return response.data;
 }
