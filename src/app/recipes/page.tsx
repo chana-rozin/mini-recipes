@@ -1,4 +1,6 @@
 "use client";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -47,15 +49,18 @@ const RecipePage = () => {
       fetchRecipes(false);
     }
   }, [showFavorites]);
+
   useEffect(() => {
     fetchRecipes(false);
     setShowFavorites(false);
   }, [searchQuery, selectedCategories]);
+  
   useEffect(() => {
     if (showFavorites) {
       fetchFavoriteRecipes();
     }
   }, [favorites])
+
   const fetchRecipes = async (more: boolean) => {
     try {
       const currentPage = more ? page + 1 : 1;
@@ -77,8 +82,8 @@ const RecipePage = () => {
         setRecipes(recipesWithId);
         setPage(1);
       }
-    } catch (error) {
-      console.error("Error fetching recipes:", error);
+    } catch (error:any) {
+      toast.error(`Error fetching recipes: ${error.message}`);
     }
   };
 
@@ -94,8 +99,8 @@ const RecipePage = () => {
         id: recipe._id,
       }));
       setRecipes(recipesWithId);
-    } catch (error) {
-      console.error("Error fetching favorite recipes:", error);
+    } catch (error:any) {
+      toast.error(`Error fetching favorite recipes: ${error.message}`);
     }
   };
 
@@ -108,8 +113,8 @@ const RecipePage = () => {
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
       }));
       setCategoryOptions(options);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    } catch (error:any) {
+      toast.error(`Error fetching categories: ${error.message}`);
     }
   };
 
@@ -204,7 +209,7 @@ const RecipePage = () => {
           </div>}
         endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
+            <b>Yay! You have seen it all :)</b>
           </p>
         }
       >
