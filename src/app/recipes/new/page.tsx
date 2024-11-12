@@ -61,7 +61,8 @@ function AddRecipePage() {
     try {
       console.log("Adding new category:", newCategory); // Debugging log
       const response = await http.post("/categories", { name: newCategory });
-  
+      console.log(response.data.data.name);
+      
       const newOption = {
         value: response.data.data.name,
         label: newCategory.charAt(0).toUpperCase() + newCategory.slice(1),
