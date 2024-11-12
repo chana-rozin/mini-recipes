@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from './page.module.css';
+import BeatLoader from "react-spinners/BeatLoader";
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
 import http from '@/services/http';
@@ -181,7 +182,7 @@ const RecipePage = () => {
         dataLength={recipes.length}
         next={()=>{fetchRecipes(true)}}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
+        loader={<BeatLoader/>}
         endMessage={!showFavorites&&
           <p style={{ textAlign: 'center' }}>
             <b>Yay! You have seen it all</b>
