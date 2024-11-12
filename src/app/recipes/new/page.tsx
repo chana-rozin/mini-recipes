@@ -7,6 +7,7 @@ import { z } from 'zod';
 import Select from 'react-select';
 import './form.css';
 import { useRouter } from 'next/navigation';
+import { IoCaretBackOutline } from "react-icons/io5";
 import http from '@/services/http'; 
 
 const recipeSchema = z.object({
@@ -68,7 +69,10 @@ function AddRecipePage() {
 
   return (
     <div className="form-container">
-      <button className="back-button" onClick={() => router.push('/recipes')}>← Back</button>
+      <button className="back-button" onClick={() => router.push('/recipes')}>
+        <IoCaretBackOutline />
+        <span className="back-text">Back</span>
+      </button>
       <h2 className="title">Add Recipe</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="recipe-form">
         <div className="form-group">
@@ -86,14 +90,70 @@ function AddRecipePage() {
               {...field}
               isMulti
               options={categoryOptions}
-              className="category-select"
+              classNamePrefix="custom-select"
               placeholder="Select categories"
-              onChange={(selectedOptions: any) =>
-                field.onChange(selectedOptions.map((option: any) => option.value))
-              } 
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  width: '100%',
+                  padding: '0 10px',
+                  height: '48px', // Consistent height
+                  borderColor: state.isFocused ? '#6200ea' : '#ddd',
+                  borderRadius: '4px',
+                  boxShadow: state.isFocused ? '0 0 0 2px rgba(98, 0, 234, 0.2)' : '0 3px 8px rgba(0, 0, 0, 0.15)',
+                  transition: 'border-color 0.3s, box-shadow 0.3s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '16px',
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  color: '#999',
+                  fontSize: '16px',
+                }),
+                menu: (base) => ({
+                  ...base,
+                  borderRadius: '4px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  padding: '10px',
+                  backgroundColor: state.isSelected ? '#6200ea' : state.isFocused ? '#f2f2f2' : 'white',
+                  color: state.isSelected ? 'white' : '#333',
+                  '&:hover': { backgroundColor: '#f2f2f2' },
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: '#6200ea',
+                  color: 'white',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }),
+                multiValueLabel: (base) => ({
+                  ...base,
+                  color: 'white',
+                  fontSize: '14px',
+                }),
+                multiValueRemove: (base) => ({
+                  ...base,
+                  color: 'white',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: '#4e00bc',
+                    color: 'white',
+                  },
+                }),
+              }}
+              onChange={(selectedOptions) =>
+                field.onChange(selectedOptions.map((option) => option.value))
+              }
               value={categoryOptions.filter(option =>
                 field.value ? field.value.includes(option.value) : false
-              )} 
+              )}
             />
           )}
         />
