@@ -66,19 +66,14 @@ const RecipePage = () => {
       const currentPage = more ? page + 1 : 1;
       const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
       let recipesWithId: [] = [];
-      if (response.length === 0) {
+      if (response.length < PAGE_SIZE) {
         setHasMore(false);
       }
-      else {
-        if (response.length < PAGE_SIZE) {
-          setHasMore(false);
-        }
-        setHasMore(true);
-        recipesWithId = response.map((recipe: any) => ({
-          ...recipe,
-          id: recipe._id,
-        }));
-      }
+      setHasMore(true);
+      recipesWithId = response.map((recipe: any) => ({
+        ...recipe,
+        id: recipe._id,
+      }));
 
       if (more) {
         setRecipes(prevState => [...prevState, ...recipesWithId]);
