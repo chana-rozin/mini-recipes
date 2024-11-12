@@ -83,7 +83,7 @@
 .category-container {
   display: flex;
   align-items: center; /* Vertically center the elements */
-  gap: 10px; /* Space between the select and the button */
+  gap: 5px; /* Space between the select and the button */
   width: 100%;
 }
 
@@ -153,7 +153,7 @@
 }
 .categories-group{
   display: grid;
-  grid-template-columns: 90% 10%;
+  grid-template-columns: 95% 6%;
 }
 .categories-group input[type="text"] {
   grid-column: 1/2;
@@ -166,6 +166,7 @@
 .new-category-input{
   display: grid;
   grid-template-columns: 60% 40%;
+  margin-top: 10px;
   gap: 10px;
 }
 .new-category-input input[type="text"] {
