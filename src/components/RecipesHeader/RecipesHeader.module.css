@@ -1,0 +1,85 @@
+.pagetitle {
+font-size: 2rem;
+font-weight: bold;
+color: black; /* Matches the purple theme */
+padding-left: 30px;
+padding-top: 60px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  padding-left: 30px;
+  padding-right: 43px;
+  padding-top: 10px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.category-select {
+  width: 250px; /* Set fixed width */
+  height: 40px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  margin-right: 20px;
+}
+
+.header input {
+  width: 170px;
+  padding: 6.2px 6px 6.2px 6px;
+  font-size: 1rem;
+  color: #333;
+  background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23666" width="16" height="16" viewBox="0 0 24 24"%3E%3Cpath d="M10 2a8 8 0 1 0 4.906 14.32l4.387 4.387 1.414-1.414-4.387-4.387A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4z"/%3E%3C/svg%3E');
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.header input:focus {
+  border-color: #6200ea;
+  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+  outline: none;
+}
+.addRecipeButton {
+    width: 170px;
+    padding: 6.2px 4px 6.2px 4px;
+    background-color: #6200ea; /* Changed to purple */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    margin-left: auto; /* Pushes button to the right */
+  }
+  
+  .addRecipeButton:hover {
+    background-color: #4e00bc; /* Darker shade of purple for hover */
+  }
+  
+@media (max-width: 600px) {
+    .header input,
+    .category-select {
+      width: 100%; /* Full width on smaller screens */
+    }
+  
+    .header {
+      gap: 1rem; /* Reduce gap for smaller screens */
+    }
+  }

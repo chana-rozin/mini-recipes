@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin-right: 10px;
+  }
+
+  .plusMinusButton{
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .plusMinusButton:hover{
+    background-color: #4e00bc;
+  }
+  
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  
