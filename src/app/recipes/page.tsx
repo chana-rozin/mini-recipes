@@ -1,4 +1,6 @@
 "use client";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -6,16 +8,19 @@ import styles from './page.module.css';
 import BeatLoader from "react-spinners/BeatLoader";
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
-import http from '@/services/http';
 import { useRouter } from 'next/navigation';
 import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
+import { getRecipes, getRecipe } from '@/services/recipes';
+import { getCategories } from '@/services/categories';
+
 const PAGE_SIZE = 10;
 
+
 const poppins = Poppins({
-  weight: ['300','400', '500', '600', '700'], 
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
-  display: 'swap', 
+  display: 'swap',
 });
 
 const RecipePage = () => {
@@ -28,8 +33,6 @@ const RecipePage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  
-
 
   const router = useRouter();
 
@@ -45,31 +48,46 @@ const RecipePage = () => {
     } else {
       fetchRecipes(false);
     }
-  }, [showFavorites,favorites,searchQuery, selectedCategories]);
+  }, [showFavorites]);
+
+  useEffect(() => {
+    fetchRecipes(false);
+    setShowFavorites(false);
+  }, [searchQuery, selectedCategories]);
+
+  useEffect(() => {
+    if (showFavorites) {
+      fetchFavoriteRecipes();
+    }
+  }, [favorites])
 
   const fetchRecipes = async (more: boolean) => {
     try {
-      const currentPage = more ? page+1 : 1;
-      const response = await http.get(`/recipes?category=${selectedCategories.join(",")}&search=${searchQuery}&page=${currentPage}&pageSize=${PAGE_SIZE}`);
-      if (response.data.length === 0) {
+      const currentPage = more ? page + 1 : 1;
+      const response = await getRecipes(selectedCategories, searchQuery, currentPage, PAGE_SIZE);
+      let recipesWithId: [] = [];
+      if (response.length < PAGE_SIZE) {
         setHasMore(false);
-        return;
       }
       setHasMore(true);
-      const recipesWithId = response.data.map((recipe: any) => ({
+      recipesWithId = response.map((recipe: any) => ({
         ...recipe,
         id: recipe._id,
       }));
+
       if (more) {
         setRecipes(prevState => [...prevState, ...recipesWithId]);
         setPage(page + 1);
       }
       else {
+
         setRecipes(recipesWithId);
         setPage(1);
       }
-    } catch (error) {
-      console.error("Error fetching recipes:", error);
+
+
+    } catch (error: any) {
+      toast.error(`Error fetching recipes: ${error.message}`);
     }
   };
 
@@ -77,7 +95,7 @@ const RecipePage = () => {
     try {
       const favoriteRecipes = await Promise.all(
         favorites.map((favoriteId) =>
-          http.get(`/recipes/${favoriteId}`).then((response) => response.data)
+          getRecipe(favoriteId)
         )
       );
       const recipesWithId = favoriteRecipes.map((recipe: any) => ({
@@ -85,22 +103,21 @@ const RecipePage = () => {
         id: recipe._id,
       }));
       setRecipes(recipesWithId);
-    } catch (error) {
-      console.error("Error fetching favorite recipes:", error);
+    } catch (error: any) {
+      toast.error(`Error fetching favorite recipes: ${error.message}`);
     }
   };
 
   const fetchCategories = async () => {
     try {
-      const response = await http.get('/categories');
-      const categories = response.data.data.documents;
+      const categories = await getCategories();
       const options = categories.map((category: any) => ({
         value: category.name,
         label: category.name.charAt(0).toUpperCase() + category.name.slice(1),
       }));
       setCategoryOptions(options);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    } catch (error: any) {
+      toast.error(`Error fetching categories: ${error.message}`);
     }
   };
 
@@ -157,7 +174,7 @@ const RecipePage = () => {
             }),
             menu: (base) => ({
               ...base,
-              zIndex: 9999, 
+              zIndex: 9999,
               borderRadius: '4px',
               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
             }),
@@ -217,7 +234,7 @@ const RecipePage = () => {
 
       <div className={styles.tabs}>
         <button
-          onClick={() =>  setShowFavorites(false)}
+          onClick={() => setShowFavorites(false)}
           className={!showFavorites ? styles.active : ""}
         >
           All Recipes
@@ -242,14 +259,19 @@ const RecipePage = () => {
         />
       )}
 
+      <ToastContainer />
+
       <InfiniteScroll
         dataLength={recipes.length}
-        next={()=>{fetchRecipes(true)}}
+        next={() => { fetchRecipes(true) }}
         hasMore={hasMore}
-        loader={<BeatLoader/>}
-        endMessage={!showFavorites&&
+        loader={!showFavorites &&
+          <div className={styles.loaderWrapper}>
+            <BeatLoader color="#6200ea" />
+          </div>}
+        endMessage={!showFavorites &&
           <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
+            {recipes.length === 0 ? <b>Sorry... looks like we found nothing today :(</b> : <b>Yay! You have seen it all :)</b>}
           </p>
         }
       >
