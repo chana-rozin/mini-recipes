@@ -68,13 +68,13 @@ const RecipePage = () => {
       let recipesWithId: [] = [];
       if (response.length < PAGE_SIZE) {
         setHasMore(false);
+      } else {
+        setHasMore(true);
       }
-      setHasMore(true);
       recipesWithId = response.map((recipe: any) => ({
         ...recipe,
         id: recipe._id,
       }));
-
       if (more) {
         setRecipes(prevState => [...prevState, ...recipesWithId]);
         setPage(page + 1);
