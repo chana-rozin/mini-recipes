@@ -1,0 +1,98 @@
+.categoryContainer {
+    display: grid;
+    grid-template-columns: 95% 6%;
+}
+
+.selectContainer {
+    display: flex;
+    gap: 8px;
+}
+
+.addButton {
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    color: #6200ea;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+    padding: 0;
+}
+
+.addButton:hover {
+    color: #4e00bc;
+    transform: scale(1.1);
+}
+
+.addButton:focus {
+    outline: none;
+}
+
+.newCategoryContainer {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+}
+
+.submitButton {
+    width: 100px;
+    padding: 10px;
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background-color 0.3s;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.categoriesGroup {
+    display: grid;
+    grid-template-columns: 95% 6%;
+}
+
+.categoriesGroup input[type="text"] {
+    grid-column: 1/2;
+}
+
+.categoriesGroup button {
+    grid-column: 2/3;
+}
+
+.newCategoryInput {
+    display: grid;
+    grid-template-columns: 1.5fr 10px 1fr;
+    margin-top: 10px;
+}
+
+.newCategoryInput input[type="text"] {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin-right: 10px;
+}
+
+.newCategoryInput input:focus {
+    border-color: #6200ea;
+    box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+    outline: none;
+  }
+
+.newCategoryInput button {
+    grid-column: 3/3;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
