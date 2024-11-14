@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import styles from './PopUpCard.module.css';
 
 interface PopUpCardProps {
+    id: string;
     imageUrl: string;
     mealName: string;
     category: string[];
