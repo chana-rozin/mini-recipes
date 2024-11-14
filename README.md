@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Recipe Website
 
-First, run the development server:
+This project is a recipe website built using **Next.js** and **React**. It allows users to browse, add, and save favorite recipes with a user-friendly form and category selector. The project integrates MongoDB for data storage and utilizes modern React features for optimal performance and usability.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Link to the Vercel Website:
+[https://recipes-tau-pearl.vercel.app/recipes](https://recipes-tau-pearl.vercel.app/recipes)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Add Recipe Form**: Users can add recipes with a form built using **React Hook Form** and **Zod** for validation.
+- **Dynamic Category Selector**: A collapsible UI component to select multiple categories, enhancing the user experience.
+- **Ingredient Management**: Flexible ingredient input with dynamic '+' and '-' buttons for easy editing.
+- **Favorites**: Save favorite recipes locally with **localStorage** for easy access.
+- **Responsive Design**: Optimized for various screen sizes to provide a seamless experience across devices.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technologies Used
 
-## Learn More
+- **Next.js** - for server-side rendering and efficient page routing.
+- **React** - for building interactive components.
+- **MongoDB** - as a NoSQL database to store recipe data.
+- **Axios** - for making API requests.
+- **React Hook Form & Zod** - for building and validating forms.
+- **CSS Modules / Tailwind CSS** (or any styling library you are using) - for styling the components.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **app** - Main folder containing pages and components.
+- **services** - Contains `axios` and `localStorage` service files for API and local storage management.
+- **api** - API routes in `api/recipes` and `api/categories`.
+- **components** - Reusable UI components, including the recipe form, category selector, and recipe list.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Installation and Setup
 
-## Deploy on Vercel
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/recipe-website.git
+   ```
+2. Install dependencies:
+   ```bash
+   cd recipe-website
+   npm install
+   ```
+3. Set up environment variables in `.env` file:
+   ```plaintext
+   MONGODB_URI=<Your MongoDB URI>
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Adding Recipes**: Go to the add recipe page and fill in the form. You can select multiple categories, add ingredients, and submit the recipe.
+2. **Browsing Recipes**: View all added recipes on the homepage.
+3. **Saving Favorites**: Click on a recipe to add it to your favorites list.
+
+## API Endpoints
+
+- **POST `/api/recipes`**: Adds a new recipe.
+- **GET `/api/recipes`**: Retrieves all recipes.
+- **GET `/api/categories`**: Fetches available categories for the form.
+
+## Contributing
+
+Contributions are welcome! Please submit a pull request or open an issue to discuss any changes.
+
+## License
+
+This project is open-source and available under the MIT License.
