@@ -90,7 +90,7 @@ const RecipesHeader: React.FC<RecipesHeaderProps> = ({categoryOptions,selectedCa
                 <input
                     type="text"
                     placeholder="Search"
-                    value={searchQuery}
+                    defaultValue={searchQuery}
                     onChange={handleSearchChange}
                     className={styles.headerInput}
                 />
