@@ -3,6 +3,9 @@
 
 This project is a recipe website built using **Next.js** and **React**. It allows users to browse, add, and save favorite recipes with a user-friendly form and category selector. The project integrates MongoDB for data storage and utilizes modern React features for optimal performance and usability.
 
+## Link to the Vercel Website:
+[https://recipes-tau-pearl.vercel.app/recipes](https://recipes-tau-pearl.vercel.app/recipes)
+
 ## Features
 
 - **Add Recipe Form**: Users can add recipes with a form built using **React Hook Form** and **Zod** for validation.
