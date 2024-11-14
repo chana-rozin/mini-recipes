@@ -28,7 +28,7 @@ const RecipePage = () => {
   const [showFavorites, setShowFavorites] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const searchDebounced = useDebouncedCallback(value => { setSearchQuery(value);},3000);
+  const searchDebounced = useDebouncedCallback(value => { setSearchQuery(value);},1500);
 
   useEffect(() => {
     fetchCategories();
