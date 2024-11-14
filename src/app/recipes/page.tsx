@@ -9,6 +9,7 @@ import { Poppins } from 'next/font/google';
 import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/localStorage';
 import { getRecipes, getRecipe } from '@/services/recipes';
 import { getCategories } from '@/services/categories';
+import { useDebouncedCallback } from 'use-debounce';
 const PAGE_SIZE = 10;
 
 
@@ -27,9 +28,8 @@ const RecipePage = () => {
   const [showFavorites, setShowFavorites] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const searchDebounced = useDebouncedCallback(value => { setSearchQuery(value);},3000);
 
-
-  //Fetch all recipes and categories when the component mounts
   useEffect(() => {
     fetchCategories();
     setFavorites(getFavorites());
@@ -116,7 +116,7 @@ const RecipePage = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setSearchQuery(e.target.value);
+    searchDebounced(e.target.value)
   };
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ value: string; label: string; }>) => {
