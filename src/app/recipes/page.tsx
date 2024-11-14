@@ -10,6 +10,7 @@ import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/l
 import { getRecipes, getRecipe } from '@/services/recipes';
 import { getCategories } from '@/services/categories';
 import { useDebouncedCallback } from 'use-debounce';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 const PAGE_SIZE = 10;
 
 
@@ -21,7 +22,8 @@ const poppins = Poppins({
 
 const RecipePage = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  // const [favorites, setFavorites] = useState<string[]>([]);
+  const { favorites, toggleFavorite, isFavorite } = useFavoritesStore();
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,12 +34,19 @@ const RecipePage = () => {
 
   useEffect(() => {
     fetchCategories();
-    setFavorites(getFavorites());
+    // setFavorites(getFavorites());
   }, []);
 
+  // useEffect(() => {
+  //   if (showFavorites) {
+  //     fetchFavoriteRecipes();
+  //   } else {
+  //     fetchRecipes(false);
+  //   }
+  // }, [showFavorites]);
   useEffect(() => {
     if (showFavorites) {
-      fetchFavoriteRecipes();
+      setRecipes(favorites); // Use cached favorites from Zustand
     } else {
       fetchRecipes(false);
     }
@@ -48,11 +57,11 @@ const RecipePage = () => {
     setShowFavorites(false);
   }, [searchQuery, selectedCategories]);
 
-  useEffect(() => {
-    if (showFavorites) {
-      fetchFavoriteRecipes();
-    }
-  }, [favorites])
+  // useEffect(() => {
+  //   if (showFavorites) {
+  //     fetchFavoriteRecipes();
+  //   }
+  // }, [favorites])
 
   const fetchRecipes = async (more: boolean) => {
     try {
@@ -84,22 +93,22 @@ const RecipePage = () => {
     }
   };
 
-  const fetchFavoriteRecipes = async () => {
-    try {
-      const favoriteRecipes = await Promise.all(
-        favorites.map((favoriteId) =>
-          getRecipe(favoriteId)
-        )
-      );
-      const recipesWithId = favoriteRecipes.map((recipe: any) => ({
-        ...recipe,
-        id: recipe._id,
-      }));
-      setRecipes(recipesWithId);
-    } catch (error: any) {
-      toast.error(`Error fetching favorite recipes: ${error.message}`);
-    }
-  };
+  // const fetchFavoriteRecipes = async () => {
+  //   try {
+  //     const favoriteRecipes = await Promise.all(
+  //       favorites.map((favoriteId) =>
+  //         getRecipe(favoriteId)
+  //       )
+  //     );
+  //     const recipesWithId = favoriteRecipes.map((recipe: any) => ({
+  //       ...recipe,
+  //       id: recipe._id,
+  //     }));
+  //     setRecipes(recipesWithId);
+  //   } catch (error: any) {
+  //     toast.error(`Error fetching favorite recipes: ${error.message}`);
+  //   }
+  // };
 
   const fetchCategories = async () => {
     try {
@@ -124,17 +133,28 @@ const RecipePage = () => {
     setSelectedCategories(categories); // Set selected categories and clear search query
   };
 
-  const handleToggleFavorite = (id: string) => {
-    const updatedFavorites = toggleFavoriteInLS(id);
-    setFavorites(updatedFavorites);
-  };
+  // const handleToggleFavorite = (id: string) => {
+  //   const updatedFavorites = toggleFavoriteInLS(id);
+  //   setFavorites(updatedFavorites);
+  // };
 
+  const handleToggleFavorite = (recipe: any) => {
+    toggleFavorite(recipe);
+  };
 
 
   return (
     <div className={poppins.className}>
       <RecipesHeader categoryOptions={categoryOptions} selectedCategories={selectedCategories} searchQuery={searchQuery} handleCategoryChange={handleCategoryChange} handleSearchChange={handleSearchChange}/>
-      <RecipesContent recipes={recipes} fetchRecipes={fetchRecipes} favorites={favorites} handleToggleFavorite={handleToggleFavorite} setShowFavorites={setShowFavorites} showFavorites={showFavorites} hasMore={hasMore} />
+      <RecipesContent
+        recipes={showFavorites ? favorites : recipes}
+        fetchRecipes={fetchRecipes}
+        favorites={favorites.map((fav) => fav.id)}
+        handleToggleFavorite={handleToggleFavorite}
+        setShowFavorites={setShowFavorites}
+        showFavorites={showFavorites}
+        hasMore={hasMore}
+      />
       <ToastContainer />
     </div>
   );
