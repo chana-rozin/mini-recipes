@@ -10,6 +10,8 @@ import { getFavorites, toggleFavorite as toggleFavoriteInLS } from '@/services/l
 import { getRecipes, getRecipe } from '@/services/recipes';
 import { getCategories } from '@/services/categories';
 import { useDebouncedCallback } from 'use-debounce';
+import { useFavoritesStore } from '@/stores/favoritesStore';
+import Recipe from '@/types/Recipe';
 const PAGE_SIZE = 10;
 
 
@@ -20,8 +22,8 @@ const poppins = Poppins({
 });
 
 const RecipePage = () => {
-  const [recipes, setRecipes] = useState<any[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const { favorites, toggleFavorite, isFavorite } = useFavoritesStore();
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,12 +34,11 @@ const RecipePage = () => {
 
   useEffect(() => {
     fetchCategories();
-    setFavorites(getFavorites());
   }, []);
 
   useEffect(() => {
     if (showFavorites) {
-      fetchFavoriteRecipes();
+      setRecipes(favorites);
     } else {
       fetchRecipes(false);
     }
@@ -48,11 +49,6 @@ const RecipePage = () => {
     setShowFavorites(false);
   }, [searchQuery, selectedCategories]);
 
-  useEffect(() => {
-    if (showFavorites) {
-      fetchFavoriteRecipes();
-    }
-  }, [favorites])
 
   const fetchRecipes = async (more: boolean) => {
     try {
@@ -84,23 +80,6 @@ const RecipePage = () => {
     }
   };
 
-  const fetchFavoriteRecipes = async () => {
-    try {
-      const favoriteRecipes = await Promise.all(
-        favorites.map((favoriteId) =>
-          getRecipe(favoriteId)
-        )
-      );
-      const recipesWithId = favoriteRecipes.map((recipe: any) => ({
-        ...recipe,
-        id: recipe._id,
-      }));
-      setRecipes(recipesWithId);
-    } catch (error: any) {
-      toast.error(`Error fetching favorite recipes: ${error.message}`);
-    }
-  };
-
   const fetchCategories = async () => {
     try {
       const categories = await getCategories();
@@ -121,20 +100,27 @@ const RecipePage = () => {
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ value: string; label: string; }>) => {
     const categories = selectedOptions ? selectedOptions.map(option => option.value) : [];
-    setSelectedCategories(categories); // Set selected categories and clear search query
+    setSelectedCategories(categories);
   };
 
-  const handleToggleFavorite = (id: string) => {
-    const updatedFavorites = toggleFavoriteInLS(id);
-    setFavorites(updatedFavorites);
-  };
+  const handleToggleFavorite = (recipe: Recipe) => {
+    toggleFavorite(recipe);
 
+  };
 
 
   return (
     <div className={poppins.className}>
       <RecipesHeader categoryOptions={categoryOptions} selectedCategories={selectedCategories} searchQuery={searchQuery} handleCategoryChange={handleCategoryChange} handleSearchChange={handleSearchChange}/>
-      <RecipesContent recipes={recipes} fetchRecipes={fetchRecipes} favorites={favorites} handleToggleFavorite={handleToggleFavorite} setShowFavorites={setShowFavorites} showFavorites={showFavorites} hasMore={hasMore} />
+      <RecipesContent
+        recipes={showFavorites ? favorites : recipes}
+        fetchRecipes={fetchRecipes}
+        isFavorite={isFavorite}
+        handleToggleFavorite={handleToggleFavorite}
+        setShowFavorites={setShowFavorites}
+        showFavorites={showFavorites}
+        hasMore={hasMore}
+      />
       <ToastContainer />
     </div>
   );
