@@ -23,6 +23,12 @@
     margin-right: 10px;
   }
 
+  .input:focus {
+    border-color: #6200ea;
+    box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+    outline: none;
+  }
+
   .plusMinusButton{
     background-color: #6200ea;
     color: white;
