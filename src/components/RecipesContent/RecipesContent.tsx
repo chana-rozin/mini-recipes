@@ -4,29 +4,30 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import BeatLoader from "react-spinners/BeatLoader";
 import Card from '@/components/Card/Card';
 import PopUpCard from '@/components/PopUpCard/PopUpCard';
+import Recipe from '@/types/Recipe';
 
 
 interface RecipesContentProps {
-    recipes: any[],
+    recipes: Recipe[],
     fetchRecipes: (more: boolean) => Promise<void>,
-    favorites: string[],
-    handleToggleFavorite: (id: string) => void,
+    isFavorite: (id: string) => boolean,
+    handleToggleFavorite: (recipe: Recipe) => void,
     setShowFavorites: React.Dispatch<React.SetStateAction<boolean>>,
     showFavorites: boolean,
     hasMore: boolean,
 }
 
-const RecipesContent: React.FC<RecipesContentProps> = ({ recipes, fetchRecipes, favorites, handleToggleFavorite ,setShowFavorites ,showFavorites,hasMore}) => {
-    const [selectedRecipe, setSelectedRecipe] = useState<null | any>(null);
+const RecipesContent: React.FC<RecipesContentProps> = ({ recipes, fetchRecipes, isFavorite, handleToggleFavorite, setShowFavorites, showFavorites, hasMore }) => {
+    const [selectedRecipe, setSelectedRecipe] = useState<null | Recipe>(null);
 
-    const handleReadMore = (recipe: any) => {
+    const handleReadMore = (recipe: Recipe) => {
         setSelectedRecipe(recipe);
     };
 
     const closePopUp = () => {
-    setSelectedRecipe(null);
+        setSelectedRecipe(null);
     };
-    
+
     return (
         <div>
             <div className={styles.tabs}>
@@ -45,14 +46,15 @@ const RecipesContent: React.FC<RecipesContentProps> = ({ recipes, fetchRecipes, 
             </div>
             {selectedRecipe && (
                 <PopUpCard
+                    id={selectedRecipe.id}
                     imageUrl={selectedRecipe.imageUrl}
                     mealName={selectedRecipe.mealName}
                     category={selectedRecipe.category}
                     ingredients={selectedRecipe.ingredients}
                     instructions={selectedRecipe.instructions}
-                    isFavorite={favorites.includes(selectedRecipe.id)}
+                    isFavorite={isFavorite(selectedRecipe.id)}
                     onClose={closePopUp}
-                    onFavoriteToggle={() => handleToggleFavorite(selectedRecipe.id)}
+                    onFavoriteToggle={() => handleToggleFavorite(selectedRecipe)}
                 />
             )}
             <InfiniteScroll
@@ -77,9 +79,9 @@ const RecipesContent: React.FC<RecipesContentProps> = ({ recipes, fetchRecipes, 
                             imageUrl={recipe.imageUrl}
                             mealName={recipe.mealName}
                             category={recipe.category}
-                            isFavorite={favorites.includes(recipe.id)}
+                            isFavorite={isFavorite(recipe?.id || '')}
                             onReadMore={() => handleReadMore(recipe)}
-                            onFavoriteToggle={() => handleToggleFavorite(recipe.id)}
+                            onFavoriteToggle={() => handleToggleFavorite(recipe)}
                         />
                     ))}
                 </div>
